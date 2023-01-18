@@ -10,7 +10,6 @@ def area_slice(x):
 slices = 4
 area = area_slice(slices)
 
-
 # create an array of values from 0 to 1 with 10000 points
 d = np.linspace(0,1,100)
 
