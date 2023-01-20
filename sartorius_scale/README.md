@@ -1,9 +1,9 @@
-# Date: 2023-01-20
-# Project: Sartorius Scale Interface
-# Contact: Noah & Jacob
-# Description: This is a python script that interfaces with a Sartorius Scale
+## Date: 2023-01-20
+## Project: Sartorius Scale Interface
+## Contact: Noah & Jacob
+## Description: This is a python script that interfaces with a Sartorius Scale
 
-# Serial_type_a_usb.py
+### Serial_type_a_usb.py
     Sartorius Scale Name - ENTRIS323-1S
     S/N - 34309393
     USB - Serial Port 9 pin to 25 pin adapter
@@ -17,7 +17,7 @@
     Data Bits - 8
     Data.Rec - Printer
 
-# Serial_type_c_usb.py
+### Serial_type_c_usb.py
     Sartorius Scale Name - 
     S/N
     USB - USB-c to USB-c
