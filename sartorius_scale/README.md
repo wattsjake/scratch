@@ -6,9 +6,11 @@
 Project: Sartorius Scale Interface
 ----------------------------------
 
-*Contact:* Noah & Jacob
+**Contact:** Noah & Jacob
 
-*Description:* Repository for interfacing with the Sartorius Scale. There are two (2) different types of interfaces that we have to communicated with the Sartorius Scale. The first is a USB type A and the second is a USB type C.
+**Description:** Repository for interfacing with the Sartorius Scale. There are two (2) different types of interfaces that we have to communicated with the Sartorius Scale. The first is a USB type A and the second is a USB type C.
+
+* Link to: [Sartorius Documentation](documents\sartorius-entris-user-manual.pdf)
 
 ### Serial_type_a_usb.py
     Sartorius Scale Name - ENTRIS323-1S
