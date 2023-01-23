@@ -1,4 +1,4 @@
-[logo]: /documents/wsu_horiz1.png "Weber State University"
+[logo]: sartorius_scale/documents/wsu_horiz1.png "Weber State University"
 
 ![alt text][logo]
 ======
