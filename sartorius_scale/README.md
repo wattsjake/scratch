@@ -1,7 +1,15 @@
-### Date: 2023-01-20
-### Project: Sartorius Scale Interface
-### Contact: Noah & Jacob
-### Description: This is a python script that interfaces with a Sartorius Scale
+[logo]: /documents/wsu_horiz1.png "Weber State University"
+
+![alt text][logo]
+======
+
+Project: Sartorius Scale Interface
+----------------------------------
+
+Contact: Noah & Jacob
+Description: This is a python script that interfaces with a Sartorius Scale
+
+
 
 ### Serial_type_a_usb.py
     Sartorius Scale Name - ENTRIS323-1S
