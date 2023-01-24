@@ -37,7 +37,6 @@ plt.plot(np.cos(np.linspace(0,np.pi/2,100)),np.sin(np.linspace(0,np.pi/2,100)))
 #plot a vertical line at the value of the smallest difference and mirror it over the y axis and make it red and dashed
 plt.plot([d[np.argmin(difference)],d[np.argmin(difference)]],[-1,1],color='r',linestyle='--')
 
-
 #plot a grid over the plot and place a origin at the center
 plt.grid()
 plt.axhline(y=0, color='k')
@@ -45,22 +44,7 @@ plt.axvline(x=0, color='k')
 
 #change the screen to be square
 plt.axis('square')
-
-
-
-
-
-
-
-
-
-
 plt.show()
-
-#plot the output
-# plt.plot(d,output)
-# plt.plot(d,difference)
-# plt.show()
 
 
 
