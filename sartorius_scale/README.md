@@ -1,4 +1,5 @@
 [logo]: documents/wsu_horiz1.png "Weber State University"
+[menu]: documents/device-usb-menu.png "Menu"
 
 ![alt text][logo]
 ======
@@ -27,18 +28,34 @@ Project: Sartorius Scale Interface
     Data.Rec - Printer
 
 ### Serial_type_c_usb.py
-    Sartorius Scale Name - 
-    S/N
+    Sartorius Scale Name - BCE323-1S
+    S/N - 0041702376
     USB - USB-c to USB-c
 
     Communication Information
     -------------------------
-    Baud Rate - 
-    Parity - 
+    Baud Rate - 115200
+    Parity - ODD
     Stop Bits - 
-    Handshake - 
-    Data Bits - 
-    Data.Rec - 
+    Handshake - None
+    Data Bits - 8 bits 
+    Data.Rec - SBI
+
+![alt text][menu]
+======
+
+### Git Useful Commands
+    git add .
+    git commit -m "message"
+    git push origin master
+    git pull origin master
+
+### Opening a Terminal in VS Code
+    Ctrl + Shift + `
+
+
+
+
 
 
 
