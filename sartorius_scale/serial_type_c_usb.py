@@ -36,8 +36,7 @@ def main():
     ser.write(sound)
 
     while(True):
-        for line in ser.read():
-            print(chr(line))
+        print(chr(ser.read()))
     
 
 if __name__ == "__main__":
