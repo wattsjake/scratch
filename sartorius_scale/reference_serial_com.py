@@ -5,6 +5,8 @@ import os.path
 from datetime import datetime
 import serial 
 
+# Original code for serial communication on sartorious scale
+
 NAME_SIZE=23
 data = []
 settings = sg.UserSettings(path='.')
