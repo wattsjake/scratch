@@ -53,6 +53,16 @@ Project: Sartorius Scale Interface
 ### Opening a Terminal in VS Code
     Ctrl + Shift + `
 
+### Reading from the serial port
+    def main():
+    ser = connect()
+    ser.write(zero)
+    ser.write(sound)
+
+    while(True):
+        for line in ser.read():
+            print(chr(line))
+
 
 
 

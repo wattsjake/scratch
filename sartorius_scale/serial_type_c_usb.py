@@ -32,8 +32,13 @@ def serial_send(parameter,ser):
 
 def main():
     ser = connect()
-    serial_send(sound,ser)
-    ser.close() 
+    ser.write(zero)
+    ser.write(sound)
+
+    while(True):
+        for line in ser.read():
+            print(chr(line))
+    
 
 if __name__ == "__main__":
      main()
