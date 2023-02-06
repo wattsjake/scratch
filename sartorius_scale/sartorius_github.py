@@ -1,3 +1,5 @@
+# Code from GitHub. May be useful later, but currently has no use.
+
 import asyncio
 import sartorius
 
