@@ -8,7 +8,7 @@ def equation(b,a=0):
 def area_slice(x):
     return np.pi/(x*2)
 
-slices = 4
+slices = 6
 area = area_slice(slices)
 
 # create an array of values from 0 to 1 with 10000 points
@@ -25,17 +25,13 @@ print(d[np.argmin(difference)])
 
 #plot a unit circle and the area of the slice
 plt.plot(np.cos(np.linspace(0,2*np.pi,100)),np.sin(np.linspace(0,2*np.pi,100)))
-plt.plot(np.cos(np.linspace(0,np.pi/2,100)),np.sin(np.linspace(0,np.pi/2,100)))
-plt.plot(np.cos(np.linspace(0,np.pi/2,100)),np.sin(np.linspace(0,np.pi/2,100))*-1)
-plt.plot(np.cos(np.linspace(0,np.pi/2,100))*-1,np.sin(np.linspace(0,np.pi/2,100))*-1)
-plt.plot(np.cos(np.linspace(0,np.pi/2,100))*-1,np.sin(np.linspace(0,np.pi/2,100)))
-plt.plot(np.cos(np.linspace(0,np.pi/2,100)),np.sin(np.linspace(0,np.pi/2,100))*-1)
-plt.plot(np.cos(np.linspace(0,np.pi/2,100))*-1,np.sin(np.linspace(0,np.pi/2,100)))
-plt.plot(np.cos(np.linspace(0,np.pi/2,100))*-1,np.sin(np.linspace(0,np.pi/2,100))*-1)
-plt.plot(np.cos(np.linspace(0,np.pi/2,100)),np.sin(np.linspace(0,np.pi/2,100)))
+
 
 #plot a vertical line at the value of the smallest difference and mirror it over the y axis and make it red and dashed
 plt.plot([d[np.argmin(difference)],d[np.argmin(difference)]],[-1,1],color='r',linestyle='--')
+
+#add the value of d to the plot as a double
+plt.text(d[np.argmin(difference)],0.5,'d = %s' %d[np.argmin(difference)],color='r')
 
 #plot a grid over the plot and place a origin at the center
 plt.grid()
