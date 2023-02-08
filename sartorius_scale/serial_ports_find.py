@@ -1,4 +1,5 @@
 from serial.tools.list_ports import comports
+from serial_type_a_usb import Entris
 
 # port_list stores the actual com port
 port_list = comports()
@@ -11,7 +12,10 @@ SARTORIUS_PID_LIST = {"vendor": "Sartorius",
 VID_LIST = {1659: SARTORIUS_PID_LIST}
 
 # Every product matched to its driver
-PRODUCT_DRIVERS = {"Entris": "serial_type_a_usb.py"}
+PRODUCT_DRIVERS = {"Entris": Entris}
+
+# Define the scale
+scale = None;
 
 for port in port_list:
     print(port)
@@ -30,6 +34,9 @@ for port in port_list:
             product = vendor_pid_list[port.pid]  # Stores the name of the product
             print("Found " + product + " Scale")
             print(port.device)
+            scale = PRODUCT_DRIVERS[product]()
+
+            
         else:
             print("Scale not found")
 
