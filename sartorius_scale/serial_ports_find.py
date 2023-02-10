@@ -6,10 +6,12 @@ port_list = comports()
 
 # Each vendor's product ids matched to the product
 SARTORIUS_PID_LIST = {"vendor": "Sartorius", 
-                      8963: "Entris"}
+                      8963: "Entris",
+                      16: "Entris"}
 
 # All scale vendor ids linked to the vendor
-VID_LIST = {1659: SARTORIUS_PID_LIST}
+VID_LIST = {1659: SARTORIUS_PID_LIST, 
+            9404: SARTORIUS_PID_LIST}
 
 # Every product matched to its driver
 PRODUCT_DRIVERS = {"Entris": Entris}
@@ -34,7 +36,7 @@ for port in port_list:
             product = vendor_pid_list[port.pid]  # Stores the name of the product
             print("Found " + product + " Scale")
             print(port.device)
-            scale = PRODUCT_DRIVERS[product]()
+            scale = PRODUCT_DRIVERS[product](port.device)
 
             
         else:

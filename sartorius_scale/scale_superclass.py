@@ -4,22 +4,46 @@ class Scale:
 
     # This was made by Noah Mazza.
 
-    BAUDRATES = None
-    BYTESIZES = None
-    STOPBITS = None
-    PARITIES = None
+    # # # SETTERS # # #
+    # Used for making a generic scale class in the future.
 
-    DEFAULT = None
+    def set_baudrates(self, baudrates):
+        self.BAUDRATES = baudrates
 
-    TARE = None
-    PRINT_SCREEN = None
-    ZERO = None
-    SOUND = None
+    def set_bytesizes(self, bytesizes):
+        self.BYTESIZES = bytesizes
+
+    def set_stopbits(self, stopbits):
+        self.STOPBITS = stopbits
+
+    def set_parities(self, parities):
+        self.PARITIES = parities
+
+    def set_tare(self, tare):
+        self.TARE = tare
+
+    def set_print_screen(self, print_screen):
+        self.PRINT_SCREEN = print_screen
+
+    def set_zero(self, zero):
+        self.ZERO = zero
+
+    def set_sound(self, sound):
+        self.SOUND = sound
+
+
+    # # # GETTERS # # #
+    # Will fill in later as needed
+
+
+    # # # METHODS # # #
+
+
 
     # All of this was generated with GitHub Copilot.  We'll see if it works.
 
-    def __init__(self, port):
-        print(self.BAUDRATES)
+    def __init__(self):
+        return self
 
     def __enter__(self):
         return self
@@ -32,10 +56,10 @@ class Scale:
         return self.ser.readline()
 
     def zero(self):
-        self.ser.write(b'Z\r')
+        self.ser.write(self.ZERO)
 
     def tare(self):
-        self.ser.write(b'T\r')
+        self.ser.write(self.TARE)
 
     def get_info(self):
         self.ser.write(b'V\r')
