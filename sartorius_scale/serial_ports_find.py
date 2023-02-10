@@ -19,8 +19,11 @@ PRODUCT_DRIVERS = {"Entris": Entris}
 # Define the scale
 scale = None;
 
+# connect_scale() connects to the scale
 def connect_scale():
     for port in port_list:
+
+        # Print the port information for testing purposes
         print(port)
         print(port.vid)
         print(port.pid)
@@ -32,15 +35,17 @@ def connect_scale():
             print("Found " + vendor + " Product")
 
             # If the product id is in the list of product ids for that vendor, 
-            # [TODO] Connect to the product using the driver
             if(port.pid in vendor_pid_list):
                 product = vendor_pid_list[port.pid]  # Stores the name of the product
                 print("Found " + product + " Scale")
                 print(port.device)
+
+                # Connect to the scale using the proper subclass to allow communications with that specific scale
                 scale = PRODUCT_DRIVERS[product](port.device)
 
                 scale.sound()  # Test the scale
 
+                # Return the connected scale
                 return scale
 
                 
