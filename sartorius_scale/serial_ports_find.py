@@ -19,29 +19,41 @@ PRODUCT_DRIVERS = {"Entris": Entris}
 # Define the scale
 scale = None;
 
-for port in port_list:
-    print(port)
-    print(port.vid)
-    print(port.pid)
+def connect_scale():
+    for port in port_list:
+        print(port)
+        print(port.vid)
+        print(port.pid)
 
-    # If the vendor id is in the list of vendors, store vendor information and possible product ids
-    if(port.vid in VID_LIST):
-        vendor_pid_list = VID_LIST[port.vid]  # Stores possible product ids for that vendor
-        vendor = vendor_pid_list["vendor"]  # Stores the name of the vendor
-        print("Found " + vendor + " Product")
+        # If the vendor id is in the list of vendors, store vendor information and possible product ids
+        if(port.vid in VID_LIST):
+            vendor_pid_list = VID_LIST[port.vid]  # Stores possible product ids for that vendor
+            vendor = vendor_pid_list["vendor"]  # Stores the name of the vendor
+            print("Found " + vendor + " Product")
 
-        # If the product id is in the list of product ids for that vendor, 
-        # [TODO] Connect to the product using the driver
-        if(port.pid in vendor_pid_list):
-            product = vendor_pid_list[port.pid]  # Stores the name of the product
-            print("Found " + product + " Scale")
-            print(port.device)
-            scale = PRODUCT_DRIVERS[product](port.device)
+            # If the product id is in the list of product ids for that vendor, 
+            # [TODO] Connect to the product using the driver
+            if(port.pid in vendor_pid_list):
+                product = vendor_pid_list[port.pid]  # Stores the name of the product
+                print("Found " + product + " Scale")
+                print(port.device)
+                scale = PRODUCT_DRIVERS[product](port.device)
 
-            
-        else:
-            print("Scale not found")
+                scale.sound()  # Test the scale
 
+                return scale
 
+                
+            else:
+                print("Scale not found")
+        
+    return None
 
+scale = connect_scale()
+
+if(not scale == None):
+    print("Scale Connected")
+
+    while(True):
+        print(scale.read_screen().decode("utf-8"))
 

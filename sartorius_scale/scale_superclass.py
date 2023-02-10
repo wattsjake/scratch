@@ -51,8 +51,8 @@ class Scale:
     def __exit__(self, exc_type, exc_value, traceback):
         self.ser.close()
 
-    def get(self):
-        self.ser.write(b'P\r')
+    def read_screen(self):
+        self.ser.write(self.PRINT_SCREEN)
         return self.ser.readline()
 
     def zero(self):
@@ -60,6 +60,9 @@ class Scale:
 
     def tare(self):
         self.ser.write(self.TARE)
+
+    def sound(self):
+        self.ser.write(self.SOUND)
 
     def get_info(self):
         self.ser.write(b'V\r')
