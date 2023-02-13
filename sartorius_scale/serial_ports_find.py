@@ -1,5 +1,7 @@
 from serial.tools.list_ports import comports
 from serial_type_a_usb import Entris
+from serial_type_c_usb import Entris_II
+import serial
 
 # port_list stores the actual com port
 port_list = comports()
@@ -7,14 +9,15 @@ port_list = comports()
 # Each vendor's product ids matched to the product
 SARTORIUS_PID_LIST = {"vendor": "Sartorius", 
                       8963: "Entris",
-                      16: "Entris"}
+                      16: "Entris_II"}
 
 # All scale vendor ids linked to the vendor
 VID_LIST = {1659: SARTORIUS_PID_LIST, 
             9404: SARTORIUS_PID_LIST}
 
 # Every product matched to its driver
-PRODUCT_DRIVERS = {"Entris": Entris}
+PRODUCT_DRIVERS = {"Entris": Entris,
+                   "Entris_II": Entris_II}
 
 # Define the scale
 scale = None;
@@ -56,9 +59,13 @@ def connect_scale():
 
 scale = connect_scale()
 
-if(not scale == None):
+if(scale != None):
     print("Scale Connected")
+    print(scale.ser)
 
     while(True):
-        print(scale.read_screen().decode("utf-8"))
+        print(scale.read_screen().decode('utf-8'))
+
+else:
+    print("Scale not connected")
 

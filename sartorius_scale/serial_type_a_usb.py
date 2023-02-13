@@ -16,10 +16,10 @@ class Entris(Scale):
         self.STOPBITS = (serial.STOPBITS_ONE, serial.STOPBITS_TWO)  # Tuple of possible stop bits
         self.PARITIES = (serial.PARITY_NONE, serial.PARITY_ODD, serial.PARITY_EVEN)  # Tuple of possible parities
 
-        self.DEFAULT = (19200, serial.EIGHTBITS, serial.STOPBITS_ONE, serial.PARITY_ODD)  # Tuple of Default configuration
+        self.DEFAULT = (1200, serial.SEVENBITS, serial.STOPBITS_ONE, serial.PARITY_ODD)  # Tuple of Default configuration
 
         self.TARE = b'\x1BU'
-        self.PRINT_SCREEN = b'\x1BP' 
+        self.PRINT_SCREEN = b'\x1BP'
         self.ZERO = b'\x1Bf3_'
         self.SOUND = b'\x1BQ'
         
@@ -27,7 +27,7 @@ class Entris(Scale):
                                  baudrate = self.DEFAULT[0], 
                                  bytesize = self.DEFAULT[1], 
                                  stopbits = self.DEFAULT[2], 
-                                 parity = self.DEFAULT[3], 
+                                 parity = self.DEFAULT[3],
                                  timeout = 2)
         
 
