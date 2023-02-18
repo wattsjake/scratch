@@ -28,7 +28,8 @@ class Entris(Scale):
                                  bytesize = self.DEFAULT[1], 
                                  stopbits = self.DEFAULT[2], 
                                  parity = self.DEFAULT[3],
-                                 timeout = 2)
+                                 timeout = 2,
+                                 rtscts = False)
         
 
 # ser = serial.Serial(port = 'COM7',

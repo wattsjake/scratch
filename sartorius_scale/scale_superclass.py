@@ -1,4 +1,5 @@
 import serial
+import time
 
 class Scale:
 
@@ -53,7 +54,11 @@ class Scale:
 
     def read_screen(self):
         self.ser.write(self.PRINT_SCREEN)
-        return self.ser.readline()
+        self.ser.rts = True
+        line = self.ser.readline()
+        time.sleep(0.1)
+        self.ser.rts = False
+        return line
 
     def zero(self):
         self.ser.write(self.ZERO)
