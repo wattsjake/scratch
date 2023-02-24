@@ -59,15 +59,15 @@ def connect_scale():
         
     return None
 
-scale = connect_scale()
+# scale = connect_scale()
 
-if(scale != None):
-    print("Scale Connected")
-    print(scale.ser)
+# if(scale != None):
+#     print("Scale Connected")
+#     print(scale.ser)
 
-    while(True):
-        print(scale.read_screen().decode('utf-8'))
+#     while(True):
+#         print(scale.read_screen().decode('utf-8'))
 
-else:
-    print("Scale not connected")
+# else:
+#     print("Scale not connected")
 
