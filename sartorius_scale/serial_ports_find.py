@@ -9,11 +9,13 @@ port_list = comports()
 # Each vendor's product ids matched to the product
 SARTORIUS_PID_LIST = {"vendor": "Sartorius", 
                       8963: "Entris",
-                      16: "Entris_II"}
+                      16: "Entris_II",
+                      24577: "Entris_II"}
 
 # All scale vendor ids linked to the vendor
 VID_LIST = {1659: SARTORIUS_PID_LIST, 
-            9404: SARTORIUS_PID_LIST}
+            9404: SARTORIUS_PID_LIST,
+            1027: SARTORIUS_PID_LIST}
 
 # Every product matched to its driver
 PRODUCT_DRIVERS = {"Entris": Entris,

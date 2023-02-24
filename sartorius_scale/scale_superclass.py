@@ -54,10 +54,7 @@ class Scale:
 
     def read_screen(self):
         self.ser.write(self.PRINT_SCREEN)
-        self.ser.rts = True
         line = self.ser.readline()
-        time.sleep(0.1)
-        self.ser.rts = False
         return line
 
     def zero(self):
