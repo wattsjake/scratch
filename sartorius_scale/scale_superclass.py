@@ -39,6 +39,9 @@ class Scale:
 
     # # # METHODS # # #
 
+    def decode_read(self):
+        return self.ser.readline().decode('utf-8')
+
 
 
     # All of this was generated with GitHub Copilot.  We'll see if it works.
