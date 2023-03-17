@@ -4,9 +4,17 @@ import time
 class Scale:
 
     # This was made by Noah Mazza.
+    def __init__(self):
+        return self
+
+    def __init__(self, port_, baudrate_, bytesize_, stopbits_, parity_, timeout_):
+        self.ser = serial.Serial(port = port_, baudrate = baudrate_, bytesize = bytesize_, stopbits = stopbits_, parity = parity_, timeout = timeout_)
+        return self
 
     # # # SETTERS # # #
     # Used for making a generic scale class in the future.
+
+
 
     def set_baudrates(self, baudrates):
         self.BAUDRATES = baudrates

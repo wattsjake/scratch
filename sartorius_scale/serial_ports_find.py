@@ -2,19 +2,18 @@ from serial.tools.list_ports import comports
 from serial_type_a_usb import Entris
 from serial_type_c_usb import Entris_II
 import serial
+from scale_superclass import Scale
 
 # port_list stores the actual com port
 port_list = comports()
 
 # Each vendor's product ids matched to the product
-SARTORIUS_PID_LIST = {"vendor": "Sartorius", 
-                      8963: "Entris",
+SARTORIUS_PID_LIST = {"vendor": "Sartorius",
                       16: "Entris_II",
                       24577: "Entris_II"}
 
 # All scale vendor ids linked to the vendor
-VID_LIST = {1659: SARTORIUS_PID_LIST, 
-            9404: SARTORIUS_PID_LIST,
+VID_LIST = {9404: SARTORIUS_PID_LIST,
             1027: SARTORIUS_PID_LIST}
 
 # Every product matched to its driver
@@ -58,6 +57,15 @@ def connect_scale():
                 print("Scale not found")
         
     return None
+
+def custom_connect_scale():
+    print("Custom Scale Connection")
+    com = input("Enter the com port: ")
+    baud = input("Enter the baud rate: ")
+    bits = input("Enter the number of bits: ")
+    stop_bits = input("Enter the number of stop bits: ")
+    parity = input("Enter the parity: ")
+    scale = Scale(com, baud, bits, stop_bits, parity, 2)
 
 # scale = connect_scale()
 
