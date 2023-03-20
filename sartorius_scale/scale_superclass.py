@@ -1,12 +1,13 @@
 import serial
 import time
+import mettler_toledo_device
 
 class Scale:
 
     # This was made by Noah Mazza.
     def __init__(self):
         if not 'PRINT_SCREEN' in locals():
-            self.set_print_screen(b'SI\r\n')
+            self.set_print_screen(b'I0\r\n')
 
     # def __init__(self, port_, baudrate_, bytesize_, stopbits_, parity_, timeout_):
     #     self.ser = serial.Serial(port = port_, baudrate = baudrate_, bytesize = bytesize_, stopbits = stopbits_, parity = parity_, timeout = timeout_)
