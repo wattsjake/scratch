@@ -62,10 +62,20 @@ def custom_connect_scale():
     print("Custom Scale Connection")
     com = input("Enter the com port: ")
     baud = input("Enter the baud rate: ")
+    if baud == "":
+        baud = 9600
     bits = input("Enter the number of bits: ")
+    if bits == "":
+        bits = 8
     stop_bits = input("Enter the number of stop bits: ")
+    if stop_bits == "":
+        stop_bits = 1
     parity = input("Enter the parity: ")
-    scale = Scale(com, baud, bits, stop_bits, parity, 2)
+    if parity == "":
+        parity = "N"
+    scale = Scale()
+    scale.set_serial(com, baud, bits, stop_bits, parity, 2)
+    return scale
 
 # scale = connect_scale()
 

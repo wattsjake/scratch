@@ -5,11 +5,12 @@ class Scale:
 
     # This was made by Noah Mazza.
     def __init__(self):
-        return self
+        if not 'PRINT_SCREEN' in locals():
+            self.set_print_screen(b'SI\r\n')
 
-    def __init__(self, port_, baudrate_, bytesize_, stopbits_, parity_, timeout_):
-        self.ser = serial.Serial(port = port_, baudrate = baudrate_, bytesize = bytesize_, stopbits = stopbits_, parity = parity_, timeout = timeout_)
-        return self
+    # def __init__(self, port_, baudrate_, bytesize_, stopbits_, parity_, timeout_):
+    #     self.ser = serial.Serial(port = port_, baudrate = baudrate_, bytesize = bytesize_, stopbits = stopbits_, parity = parity_, timeout = timeout_)
+    #     return self
 
     # # # SETTERS # # #
     # Used for making a generic scale class in the future.
@@ -40,6 +41,10 @@ class Scale:
     def set_sound(self, sound):
         self.SOUND = sound
 
+    def set_serial(self, port_, baudrate_, bytesize_, stopbits_, parity_, timeout_):
+        self.ser = serial.Serial(port = port_, baudrate = baudrate_, bytesize = bytesize_, stopbits = stopbits_, parity = parity_, timeout = timeout_)
+        return self
+
 
     # # # GETTERS # # #
     # Will fill in later as needed
@@ -54,8 +59,7 @@ class Scale:
 
     # All of this was generated with GitHub Copilot.  We'll see if it works.
 
-    def __init__(self):
-        return self
+
 
     def __enter__(self):
         return self
