@@ -17,7 +17,7 @@ if scale == None:
 scale.ser.timeout = .1
 
 print(scale.ser)
-collector = data_class.DataCollect(scale=scale, unit='g', time_unit='s', delay=0.1, delay_overall=True)
+collector = data_class.DataCollect(scale=scale, unit='g', time_unit='s', delay=0.5, delay_overall=True)
 
 break_key = 'q'
 start_key = 's'
@@ -30,9 +30,9 @@ while(True):
     if keyboard.is_pressed(break_key):
         break
     if keyboard.is_pressed(start_key) and not collector.go_measure:
-        collector.StartMeasure(data[4])
+        collector.StartMeasure(data[5])
     if keyboard.is_pressed(stop_key):
         collector.StopMeasure()
-    collector.AddMeasure(data[4])
+    collector.AddMeasure(data[5])
 
 collector.ExportData('test.csv')
