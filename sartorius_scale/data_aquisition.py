@@ -1,6 +1,6 @@
 import numpy as np
 import serial_ports_find
-import mettler_toledo_device
+from mettler_toledo_scales import Mettler_Toledo
 import csv
 import time
 import data_class
@@ -11,28 +11,50 @@ def update_tss(start_time):
 
 scale = serial_ports_find.connect_scale()
 
-if scale == None:
-    scale = serial_ports_find.custom_connect_scale()
+# Commented out until testing is done
+# if scale == None:
+#     scale = serial_ports_find.custom_connect_scale()
+
+# TESTING CODE #
+scale = Mettler_Toledo('COM5')
+# END OF TESTING CODE #
 
 scale.ser.timeout = .1
 
 print(scale.ser)
-collector = data_class.DataCollect(scale=scale, unit='g', time_unit='s', delay=0.5, delay_overall=True)
+collector = data_class.DataCollect(scale=scale, unit='g', time_unit='s', delay=1, delay_overall=True)
 
 break_key = 'q'
 start_key = 's'
 stop_key = 'e'
+next_column_key = 'n'
+force_measure_key = 'f'
+columns = []  # List of columns to print out
+columns.append(0)
+last_key_pressed = None
 
 while(True):
-    data = scale.read_screen().decode('utf-8')
-    print(data)
-    data = data.split(' ')
+    measure = scale.get_weight_data()
     if keyboard.is_pressed(break_key):
+        scale.sound()
         break
     if keyboard.is_pressed(start_key) and not collector.go_measure:
-        collector.StartMeasure(data[5])
+        scale.sound()
+        collector.StartMeasure(measure)
+    if keyboard.is_pressed(next_column_key) and last_key_pressed != next_column_key:
+        scale.sound()
+        collector.NextColumn()
+        columns.append(columns[-1] + 1)
+        last_key_pressed = next_column_key
+    if keyboard.is_pressed(force_measure_key) and last_key_pressed != force_measure_key or True:
+        scale.sound()
+        collector.AddMeasure(measure, force = True)
+        last_key_pressed = force_measure_key
+    if not keyboard.is_pressed(next_column_key or force_measure_key):
+        last_key_pressed = None
     if keyboard.is_pressed(stop_key):
+        scale.sound()
         collector.StopMeasure()
-    collector.AddMeasure(data[5])
+    collector.AddMeasure(measure)
 
-collector.ExportData('test.csv')
+collector.ExportData('test.csv', columns = columns)

@@ -53,8 +53,11 @@ class Scale:
 
     # # # METHODS # # #
 
-    def decode_read(self):
-        return self.ser.readline().decode('utf-8')
+    # This method is used to send a command to the scale and receive a response.
+    # After sending a command, the response has to be read or else miscommunication will occur.
+    def send_receive(self, command):
+        self.ser.write(command)
+        return self.ser.readline()
 
 
 
@@ -69,18 +72,16 @@ class Scale:
         self.ser.close()
 
     def read_screen(self):
-        self.ser.write(self.PRINT_SCREEN)
-        line = self.ser.readline()
-        return line
+        return self.send_receive(self.PRINT_SCREEN)
 
     def zero(self):
-        self.ser.write(self.ZERO)
+        return self.send_receive(self.ZERO)
 
     def tare(self):
-        self.ser.write(self.TARE)
+        return self.send_receive(self.TARE)
 
     def sound(self):
-        self.ser.write(self.SOUND)
+        return self.send_receive(self.SOUND)
 
     def get_info(self):
         self.ser.write(b'V\r')
