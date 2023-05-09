@@ -42,6 +42,6 @@ class Mettler_Toledo(Scale):
         weight_data = Data
         if(weight_string[2] == 'S'):
             weight_data.stable = True
-        weight_data.weight = float(weight_string[6:13])
+        weight_data.measure = float(weight_string[6:13])
         weight_data.unit = weight_string[15]
         return weight_data

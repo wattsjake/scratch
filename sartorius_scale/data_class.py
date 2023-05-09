@@ -1,5 +1,6 @@
 import time
 import csv
+import copy
 from dataclasses import dataclass
 import numpy as np
 from numpy_da import DynamicArray
@@ -94,7 +95,7 @@ class DataCollect:
         # If the column is not initialized, initialize it
         if( len(self.measures) <= self.column):
             self.measures.append([None for y in range(0)])
-        self.measures[self.column].append(measurement)
+        self.measures[self.column].append(copy.deepcopy(measurement))
 
     def GetTimeIncrement(self, **kwargs):
         time_increment = 0
