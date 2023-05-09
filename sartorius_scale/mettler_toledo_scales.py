@@ -39,7 +39,7 @@ class Mettler_Toledo(Scale):
         self.ser.write(self.PRINT_SCREEN)
         weight_string = self.ser.readline().decode('utf-8')
         # print(weight_string)  # For debugging
-        weight_data = Data
+        weight_data = Data()
         if(weight_string[2] == 'S'):
             weight_data.stable = True
         weight_data.measure = float(weight_string[6:13])
