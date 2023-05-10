@@ -34,13 +34,12 @@ columns.append(0)
 last_key_pressed = None
 
 while(True):
-    measure = scale.get_weight_data()
     if keyboard.is_pressed(break_key):
         scale.sound()
         break
     if keyboard.is_pressed(start_key) and not collector.go_measure:
         scale.sound()
-        collector.StartMeasure(measure)
+        collector.StartMeasure()
     if keyboard.is_pressed(next_column_key) and last_key_pressed != next_column_key:
         scale.sound()
         collector.NextColumn()
@@ -48,13 +47,13 @@ while(True):
         last_key_pressed = next_column_key
     if keyboard.is_pressed(force_measure_key) and last_key_pressed != force_measure_key or True:  # Testing with forced collection
         scale.sound()
-        collector.AddMeasure(measure, force = True)
+        collector.AddMeasure(force = True)
         last_key_pressed = force_measure_key
     if not keyboard.is_pressed(next_column_key or force_measure_key):
         last_key_pressed = None
     if keyboard.is_pressed(stop_key):
         scale.sound()
         collector.StopMeasure()
-    collector.AddMeasure(measure)
+    collector.AddMeasure()
 
 collector.ExportData('test.csv', columns = columns, times=True)
