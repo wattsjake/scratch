@@ -26,8 +26,8 @@ class DataCollect:
         self.indexes = []  # Indexes for each column
         self.column = 0  # Which column data is being collected in
         self.scale = kwargs.get('scale', None)
-        self.final_measure = []  # Whether or not the final measure has been taken
-        self.__initialize_columns()
+        self.valid_measure = []  # Whether or not the final measure is valid
+        self.InitializeColumns()
         
 
     def set_scale(self, scale: Scale):
@@ -77,11 +77,13 @@ class DataCollect:
 
         Args:
             measurement (Data): Measurement to be added.
-        """        
+        """     
+
+        column = kwargs.get('column', self.column)   
 
         # Add measure if the measure is being forced
         if kwargs.get('force', False):
-            self.__add_measure(*args)
+            self.__add_measure(*args, **kwargs)
 
         # Do not add the measure if measurements are not being taken
         if (not self.go_measure):
@@ -89,11 +91,14 @@ class DataCollect:
         
         # Get the time increment. If delay_overall is true, get the overall delay based on the number of measures.
         # Otherwise, get the delay since the last measure.
-        time_increment = self.GetTimeIncrement()
+        time_increment = self.GetTimeIncrement(**kwargs)
 
-        # If the delay has been met, add measure.
+        # If the delay has been met, add measure.  Otherwise, update the last measure so it is current.
         if (time_increment > self.delay):
-            self.__add_measure(*args)
+            self.__add_measure(*args, **kwargs)
+        else:
+            self.__update_measure(*args)
+            self.valid_measure[column] = False
 
 
     def __add_measure(self, *args, **kwargs):
@@ -107,7 +112,7 @@ class DataCollect:
 
         column = kwargs.get('column', self.column)
         
-        if(self.final_measure[column] == True):
+        if(self.valid_measure[column] == True):
             try:
                 self.measures[column].append(args[0])
             except IndexError:
@@ -116,7 +121,7 @@ class DataCollect:
         
         # If the last measure in the column is not the final measure, update it and say it's the final measure
         self.__update_measure(*args, **kwargs)
-        self.final_measure = True
+        self.valid_measure = True
         
 
     def __update_measure(self, *args, **kwargs):
@@ -134,15 +139,46 @@ class DataCollect:
             self.measures[column][row] = self.scale.get_weight_data()
 
 
+    def RemoveInvalidMeasures(self, **kwargs):
+        r"""Removes measures that are not finalized from the data collector.
+
+        Removes invalid measures from all columns by default.
+
+        Args:
+            **columns (int): Column to remove invalid measures from.
+            **columns (list): List of columns to remove invalid measures from.
+
+        """        
+
+        columns = kwargs.get('columns', range(len(self.measures)))
+
+        if columns is int:
+            if self.valid_measure[columns] == False:
+                self.measures[columns].pop()
+            self.valid_measure[columns] = True
+
+        for col in columns:
+            if self.valid_measure[col] == False:
+                self.measures[col].pop()
+            self.valid_measure[col] = True
+
+
     def GetTimeIncrement(self, **kwargs):
-        time_increment = 0
-        if( (self.delay_overall or kwargs.get('overall', False)) and len(self.measures[self.column]) > 0):
-            return (time.time() - self.start_times[self.column]) / len(self.measures[self.column])
+
+        column = kwargs.get('column', self.column)
+
+        # If the delay is based on the overall measures and there are enough measures to do so, return the overall delay
+        if( (self.delay_overall or kwargs.get('overall', False)) and len(self.measures[column]) > (0 + self.valid_measure[column])):
+            return (time.time() - self.start_times[column]) / len(self.measures[column])
         else:
-            return time.time() - self.measures[self.column][-1].time
+            # Return the time since the last valid measure otherwise
+            return time.time() - self.measures[column][-1 - self.valid_measure[column]].time
 
 
     def ExportData(self, file_out, **kwargs):
+
+        self.RemoveInvalidMeasures()
+
         with open(file_out, 'w', newline='') as csvfile:
             fields = {}
 
@@ -153,34 +189,57 @@ class DataCollect:
             # Add fields for every column
             for column in kwargs["columns"]:
                 if kwargs.get("times", False):
-                    fields['Time (' + self.measures[column][0].time_unit + ') ' + str(column)] = None
-                fields['Measure (' + self.measures[column][0].unit + ') ' + str(column)] = None
+                    fields[self.TimeFieldName(column)] = None
+                fields[self.MeasureFieldName(column)] = None
 
             # Create dictwriter object and write the header
             writer = csv.DictWriter(csvfile, delimiter=',', fieldnames=fields)
             writer.writeheader()
 
-            # Find the maximum length of the columns
-            max_len = 0
+            # Find max length of all columns
+            max_length = 0
             for column in kwargs.get("columns"):
-                max_len = max(max_len, len(self.measures[column]))
+                if len(self.measures[column]) > max_length:
+                    max_length = len(self.measures[column])
 
+            
             # Write the data
-            for i in range(max_len):
-                row = {}
+            for row in range(max_length):
+                writer_row = {}
                 for column in kwargs.get("columns"):
-                    if i < len(self.measures[column]):
+                    if row < len(self.measures[column]):
                         if kwargs.get("times", False):
-                            row['Time (' + self.measures[column][0].time_unit + ') ' + str(column)] = (self.measures[column][i].time - self.start_times[column])
-                        row['Measure (' + self.measures[column][0].unit + ') ' + str(column)] = self.measures[column][i].measure
-                writer.writerow(row)
+                            writer_row[self.TimeFieldName(column)] = (self.GetTimeSinceStart(column, row))
+                        writer_row[self.MeasureFieldName(column)] = self.GetMeasure(column, row)
+                    else:  # If there is no data for the row, write an empty string
+                        if kwargs.get("times", False):
+                            writer_row[self.TimeFieldName(column)] = ""
+                        writer_row[self.MeasureFieldName(column)] = ""
+                writer.writerow(writer_row)
+
+            
+    def TimeFieldName(self, column: int)-> str:
+        return 'Time (' + self.measures[column][0].time_unit + ') ' + str(column)
+    
+
+    def GetTimeSinceStart(self, column: int, row: int):
+        return self.measures[column][row].time - self.start_times[column]
+    
+
+    def MeasureFieldName(self, column: int)-> str:
+        return 'Measure (' + self.measures[column][0].unit + ') ' + str(column)
+    
+
+    def GetMeasure(self, column: int, row: int):
+        return self.measures[column][row].measure
+
 
     def ChangeColumn(self, column, **kwargs):
 
         # If forced, initialize all columns up to the specified column
         if kwargs.get('force', False):
             self.column = column
-            self.__initialize_columns()
+            self.InitializeColumns()
             return
 
         # If not forced and the column does not exist, raise an error
@@ -188,13 +247,15 @@ class DataCollect:
             raise IndexError("Column does not exist")
         self.column = column
 
+
     def NextColumn(self):
         self.ChangeColumn(self.column + 1, force = True)
 
-    def __initialize_columns(self, **kwargs):
+
+    def InitializeColumns(self, **kwargs):
 
         # If the column is not initialized, initialize it and all previous uninitialized columns
         while(len(self.measures) <= kwargs.get('column', self.column)):
             self.measures.append([None for y in range(0)])
-            self.final_measure.append(True)
+            self.valid_measure.append(True)
         
