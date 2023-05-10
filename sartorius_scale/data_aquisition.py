@@ -57,4 +57,4 @@ while(True):
         collector.StopMeasure()
     collector.AddMeasure(measure)
 
-collector.ExportData('test.csv', columns = columns)
+collector.ExportData('test.csv', columns = columns, times=True)

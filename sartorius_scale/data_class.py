@@ -8,11 +8,17 @@ from scale_superclass import Scale
 
 @dataclass
 class Data:
+
+    def __init__(self):
+        self.time = time.time()
+
+    time: float  # Time is automatically set to when the object was created
     measure: float = 0
-    time: float = time.time()
     unit: str = 'g'
     time_unit: str = 's'
     stable: bool = False
+
+
 
 
 class DataCollect:
@@ -22,7 +28,6 @@ class DataCollect:
         self.delay_overall = kwargs.get('delay_type', True)
         self.measures = [[None for x in range(0)] for y in range(0)]  # Uses Data class for storing measures, stores lists of measures for each column
         self.go_measure = False
-        self.start_times = []  # Start times for each column
         self.indexes = []  # Indexes for each column
         self.column = 0  # Which column data is being collected in
         self.scale = kwargs.get('scale', None)
@@ -53,10 +58,6 @@ class DataCollect:
         # If not currently measuring, start measuring  
         if not self.go_measure:
             self.go_measure = True
-
-            # If the start time is not set, set it
-            if len(self.start_times) == self.column:
-                self.start_times.append(time.time())
             self.AddMeasure(measurement, force = True)
         
 
@@ -223,7 +224,7 @@ class DataCollect:
     
 
     def GetTimeSinceStart(self, column: int, row: int):
-        return self.measures[column][row].time - self.start_times[column]
+        return self.measures[column][row].time - self.measures[column][0].time
     
 
     def MeasureFieldName(self, column: int)-> str:
