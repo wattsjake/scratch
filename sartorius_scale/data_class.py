@@ -8,27 +8,47 @@ from scale_superclass import Scale
 
 @dataclass
 class Data:
+    r"""Stores data for a given measurement.
+
+    Defaults:
+        time: float = time.time()
+        measure: float = 0
+        unit: str = 'g'  # Default unit is grams
+        time_unit: str = 's'  # Default time unit is seconds
+        stable: bool = False
+    """    
 
     def __init__(self):
+        """Sets time to the current time when the object was created.
+        """
         self.time = time.time()
 
     time: float  # Time is automatically set to when the object was created
     measure: float = 0
-    unit: str = 'g'
-    time_unit: str = 's'
+    unit: str = 'g'  # Default unit is grams
+    time_unit: str = 's'  # Default time unit is seconds
     stable: bool = False
 
 
 
 
 class DataCollect:
+    """Collects Data objects and stores them in columns and rows.
+    """    
 
     def __init__(self, **kwargs):
+        r"""Creates default values for the data collector.
+
+        Args:
+            **delay (float, optional): Delay between measures. Default is 0.5.
+            **delay_overall (bool, optional): Whether or not the delay is overall or between measures. Default is True.
+            **scale (Scale, optional): The scale to be used for data collection.
+        """        
+
         self.delay = kwargs.get('delay', 0.5)
         self.delay_overall = kwargs.get('delay_type', True)
         self.measures = [[None for x in range(0)] for y in range(0)]  # Uses Data class for storing measures, stores lists of measures for each column
         self.go_measure = False
-        self.indexes = []  # Indexes for each column
         self.column = 0  # Which column data is being collected in
         self.scale = kwargs.get('scale', None)
         self.valid_measure = []  # Whether or not the final measure is valid
@@ -36,7 +56,7 @@ class DataCollect:
         
 
     def set_scale(self, scale: Scale):
-        """Sets the scale for the data collector.
+        r"""Sets the scale for the data collector.
 
         Args:
             scale (Scale): The scale to be used for data collection.
@@ -45,20 +65,21 @@ class DataCollect:
         self.scale = scale
 
 
-    def StartMeasure(self, measurement: Data):
-        """Start measuring data.
+    def StartMeasure(self, *args):
+        r"""Start measuring data.
 
         Allows data to be collected at regular intervals from the start time
-        without being forced.
+        without being forced.  Initial measurement is required if there is no
+        scale to get the initial measurement from.
 
         Args:
-            measurement (Data): Initial measurment to be added.
+            *args[0] (Data, optional): Initial measurement to be added. If Data Collector has scale, default is measurement from scale.
         """      
 
         # If not currently measuring, start measuring  
         if not self.go_measure:
             self.go_measure = True
-            self.AddMeasure(measurement, force = True)
+            self.AddMeasure(*args, force = True)
         
 
     def StopMeasure(self):
@@ -71,13 +92,16 @@ class DataCollect:
 
 
     def AddMeasure(self, *args, **kwargs):
-        """Adds a measure to the current column of the data collector.
+        r"""Adds a measure to the current column of the data collector.
 
         Adds a measure to the current column of the data collector if the delay has been met
         or if the measure is being forced.  If the delay has not been met, the measure is not added.
+        A measurement must be included if there is no scale to take the measurement from.
 
         Args:
-            measurement (Data): Measurement to be added.
+            *args[0] (Data, optional): The measurement to be added. If Data Collector has scale, default is measurement from scale.
+            **force (bool, optional): Whether or not the measure is being forced. Default is False.
+            **column (int, optional): Which column the measure is being added to. Default is current column.
         """     
 
         column = kwargs.get('column', self.column)   
@@ -103,12 +127,13 @@ class DataCollect:
 
 
     def __add_measure(self, *args, **kwargs):
-        """Adds a measure to the current column of the data collector.
+        r"""Adds a measure to the current column of the data collector.
 
         Private method to be used within data collection class for measures that must be added.
 
         Args:
-            measurement (data_class.Data): The measurement to be added.
+            *args[0] (Data, optional): The measurement to be added. If Data Collector has scale, default is measurement from scale.
+            **column (int, optional): Which column the measure is being added to. Default is current column.
         """        
 
         column = kwargs.get('column', self.column)
@@ -121,14 +146,19 @@ class DataCollect:
             return
         
         # If the last measure in the column is not the final measure, update it and say it's the final measure
-        self.__update_measure(*args, **kwargs)
+        self.__update_measure(*args, **kwargs, row = -1)
         self.valid_measure = True
         
 
     def __update_measure(self, *args, **kwargs):
-        """Updates a measure in the current column of the data collector.
+        r"""Updates a measure in the current column of the data collector.
 
         Private method to be used within data collection class for measures that must be updated.
+
+        Args:
+            *args[0] (Data, optional): The measurement to replace another measurement. If Data Collector has scale, default is measurement from scale.
+            **column (int, optional): Which column the measure is being added to. Defaults to current column.
+            **row (int, optional): Which row the measure is being updated at. Defaults to last row.
         """        
 
         column = kwargs.get('column', self.column)
@@ -146,8 +176,8 @@ class DataCollect:
         Removes invalid measures from all columns by default.
 
         Args:
-            **columns (int): Column to remove invalid measures from.
-            **columns (list): List of columns to remove invalid measures from.
+            **columns (int, optional): Column to remove invalid measures from.
+            **columns (list, optional): List of columns to remove invalid measures from. Defaults to all columns.
 
         """        
 
@@ -165,6 +195,19 @@ class DataCollect:
 
 
     def GetTimeIncrement(self, **kwargs):
+        r"""Gets the time increment to find delay.
+
+        Gets the time increment to find delay based on the delay type.
+        Overall delay is the number of measures in the column divided by the time between first and last measures.
+        Not overall delay is the time between the last two measures.
+
+        Args:
+            **column (int, optional): Column to get time increment for. Defaults to current column.
+            **overall (bool, optional): Whether or not to get the overall delay. Defaults to delay_overall.
+
+        Returns:
+            float: Delay for given delay type.
+        """        
 
         column = kwargs.get('column', self.column)
 
@@ -176,7 +219,14 @@ class DataCollect:
             return time.time() - self.measures[column][-1 - self.valid_measure[column]].time
 
 
-    def ExportData(self, file_out, **kwargs):
+    def ExportData(self, file_out: str, **kwargs):
+        r"""Exports measurement data to a csv file.
+
+        Args:
+            file_out (str): Name of file to output data to.
+            **columns (list, optional): Ordered list of columns to export. Defaults to all columns.
+            **times (bool, optional): Whether or not to include time data. Defaults to False.
+        """        
 
         self.RemoveInvalidMeasures()
 
@@ -219,23 +269,82 @@ class DataCollect:
                 writer.writerow(writer_row)
 
             
-    def TimeFieldName(self, column: int)-> str:
+    def TimeFieldName(self, column: int = None)-> str:
+        r"""Gets the time field name for a given column.
+
+        Args:
+            column (int, optional): Column to get time field name for. Defaults to current column.
+
+        Returns:
+            str: Time field name for given column.
+        """        
+
+        if column == None:
+            column = self.column
+
         return 'Time (' + self.measures[column][0].time_unit + ') ' + str(column)
     
 
-    def GetTimeSinceStart(self, column: int, row: int):
+    def GetTimeSinceStart(self, column: int = None, row: int = -1)-> float:
+        r"""Gets the time of a data point from the start of the column.
+
+        Args:
+            column (int, optional): Which column to pull data from. Defaults to current column.
+            row (int, optional): Which row of the column to compare to first item in column. Defaults to last row of column.
+
+        Returns:
+            float: Time between selected measure and first measure in column
+        """        
+
+        if column == None:
+            column = self.column
+
         return self.measures[column][row].time - self.measures[column][0].time
     
 
-    def MeasureFieldName(self, column: int)-> str:
+    def MeasureFieldName(self, column: int = None)-> str:
+        r"""Gets the measure field name for a given column.
+
+        Args:
+            column (int, optional): Column to get measure field name from. Defaults to current column.
+
+        Returns:
+            str: Measure field name for given column.
+        """        
+
+        if column == None:
+            column = self.column
+
         return 'Measure (' + self.measures[column][0].unit + ') ' + str(column)
     
 
-    def GetMeasure(self, column: int, row: int):
+    def GetMeasure(self, column: int = None, row: int = -1)-> float:
+        r"""Gets the measurement of a data point from a given column and row.
+
+        Args:
+            column (int, optional): Which column to pull data from. Defaults to current column.
+            row (int, optional): Which row of the column to pull data from. Defaults to last row.
+
+        Returns:
+            float: Measurement of selected datum.
+        """        
+        
+        if column == None:
+            column = self.column
+
         return self.measures[column][row].measure
 
 
-    def ChangeColumn(self, column, **kwargs):
+    def ChangeColumn(self, column: int, **kwargs):
+        r"""Changes the column to a specified column.
+
+        Args:
+            column (int): Column to move to.
+            **force (bool, optional): Whether or not to force the selected column to exist. Defaults to False.
+
+        Raises:
+            IndexError: Moved to column that does not exist.
+        """        
 
         # If forced, initialize all columns up to the specified column
         if kwargs.get('force', False):
@@ -250,10 +359,17 @@ class DataCollect:
 
 
     def NextColumn(self):
+        r"""Moves to the next column from the currently selected column.
+        """        
         self.ChangeColumn(self.column + 1, force = True)
 
 
     def InitializeColumns(self, **kwargs):
+        r"""Initializes columns up to the currently selected column.
+
+        Args:
+            **column (int): Column to initialize up to. Defaults to current column.
+        """        
 
         # If the column is not initialized, initialize it and all previous uninitialized columns
         while(len(self.measures) <= kwargs.get('column', self.column)):
