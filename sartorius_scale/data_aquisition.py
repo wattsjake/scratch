@@ -1,6 +1,6 @@
 import numpy as np
 import serial_ports_find
-from mettler_toledo_scales import Mettler_Toledo
+from scaledrivers import scale, mettlertoledo, sartorius
 import csv
 import time
 import data_class
@@ -16,7 +16,7 @@ scale = serial_ports_find.connect_scale()
 #     scale = serial_ports_find.custom_connect_scale()
 
 # TESTING CODE #
-scale = Mettler_Toledo('COM5')
+scale = mettlertoledo.MettlerToledo('COM5')
 # END OF TESTING CODE #
 
 scale.ser.timeout = .1

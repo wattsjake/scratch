@@ -1,9 +1,8 @@
 import time
 import csv
-import copy
 from dataclasses import dataclass
 import numpy as np
-from scale_superclass import Scale
+from scaledrivers.scale import Scale
 
 
 @dataclass
@@ -19,7 +18,7 @@ class Data:
     """    
 
     def __init__(self):
-        """Sets time to the current time when the object was created.
+        r"""Sets time to the current time when the object was created.
         """
         self.time = time.time()
 
@@ -33,7 +32,7 @@ class Data:
 
 
 class DataCollect:
-    """Collects Data objects and stores them in columns and rows.
+    r"""Collects Data objects and stores them in columns and rows.
     """    
 
     def __init__(self, **kwargs):

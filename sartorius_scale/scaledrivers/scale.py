@@ -1,6 +1,6 @@
 import serial
-import time
-import mettler_toledo_device
+
+# Superclass for all scales
 
 class Scale:
 
@@ -15,8 +15,6 @@ class Scale:
 
     # # # SETTERS # # #
     # Used for making a generic scale class in the future.
-
-
 
     def set_baudrates(self, baudrates):
         self.BAUDRATES = baudrates

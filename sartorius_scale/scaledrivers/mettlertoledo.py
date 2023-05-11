@@ -1,14 +1,10 @@
-import csv
-import numpy as np
-import serial 
-import time
-
-import matplotlib.pyplot as plt
-import numpy as np
-from scale_superclass import Scale
+import serial
+from scale import Scale
 from data_class import Data
 
-class Mettler_Toledo(Scale):
+# Superclass for all Mettler Toledo scales
+
+class MettlerToledo(Scale):
 
 
 

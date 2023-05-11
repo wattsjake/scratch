@@ -4,7 +4,7 @@ import serial
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scale_superclass import Scale
+from scale import Scale
 
 class Entris_II(Scale):
 

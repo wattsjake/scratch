@@ -1,8 +1,6 @@
 from serial.tools.list_ports import comports
-from serial_type_a_usb import Entris
-from serial_type_c_usb import Entris_II
-import serial
-from scale_superclass import Scale
+from scaledrivers import scale, mettlertoledo, sartorius
+from scaledrivers.scale import Scale
 
 # port_list stores the actual com port
 port_list = comports()
@@ -17,8 +15,8 @@ VID_LIST = {9404: SARTORIUS_PID_LIST,
             1027: SARTORIUS_PID_LIST}
 
 # Every product matched to its driver
-PRODUCT_DRIVERS = {"Entris": Entris,
-                   "Entris_II": Entris_II}
+PRODUCT_DRIVERS = {"Entris": Scale,
+                   "Entris_II": sartorius.Entris_II}
 
 # Define the scale
 scale = None;
