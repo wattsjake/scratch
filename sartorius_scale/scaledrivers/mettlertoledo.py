@@ -1,5 +1,6 @@
 import serial
-from scale import Scale
+from scaledrivers import scale
+from scaledrivers.scale import Scale
 from data_class import Data
 
 # Superclass for all Mettler Toledo scales
@@ -24,12 +25,7 @@ class MettlerToledo(Scale):
         self.ZERO = b'Z\r\n'
         self.SOUND = b'M12\r\n'
         
-        self.ser = serial.Serial(port = port, 
-                                 baudrate = self.DEFAULT["baudrate"], 
-                                 bytesize = self.DEFAULT["bytesize"], 
-                                 stopbits = self.DEFAULT["stopbits"], 
-                                 parity = self.DEFAULT["parity"], 
-                                 timeout = 2)
+        self.set_serial(port, self.DEFAULT)
         
     
     def get_weight_data(self):

@@ -7,8 +7,8 @@ port_list = comports()
 
 # Each vendor's product ids matched to the product
 SARTORIUS_PID_LIST = {"vendor": "Sartorius",
-                      16: "Entris_II",
-                      24577: "Entris_II"}
+                      16: "EntrisII",
+                      24577: "EntrisII"}
 
 # All scale vendor ids linked to the vendor
 VID_LIST = {9404: SARTORIUS_PID_LIST,
@@ -16,7 +16,7 @@ VID_LIST = {9404: SARTORIUS_PID_LIST,
 
 # Every product matched to its driver
 PRODUCT_DRIVERS = {"Entris": Scale,
-                   "Entris_II": sartorius.Entris_II}
+                   "Entris_II": sartorius.EntrisII}
 
 # Define the scale
 scale = None;

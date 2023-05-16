@@ -4,6 +4,8 @@ import serial
 
 class Scale:
 
+    timeout = 0.5  # Default timeout for serial communication
+
     # This was made by Noah Mazza.
     def __init__(self):
         if not 'PRINT_SCREEN' in locals():
@@ -40,8 +42,13 @@ class Scale:
     def set_sound(self, sound):
         self.SOUND = sound
 
-    def set_serial(self, port_, baudrate_, bytesize_, stopbits_, parity_, timeout_):
-        self.ser = serial.Serial(port = port_, baudrate = baudrate_, bytesize = bytesize_, stopbits = stopbits_, parity = parity_, timeout = timeout_)
+    def set_serial(self, port_: str, ser_settings: dict):
+        self.ser = serial.Serial(port=port_, 
+                                 baudrate = ser_settings.get("baudrate", 9600), 
+                                 bytesize = ser_settings.get("bytesize", serial.EIGHTBITS), 
+                                 stopbits = ser_settings.get("stopbits", serial.STOPBITS_ONE), 
+                                 parity = ser_settings.get("parity", serial.PARITY_NONE), 
+                                 timeout = self.timeout)
         return self
 
 
