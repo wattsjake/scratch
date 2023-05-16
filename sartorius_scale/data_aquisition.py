@@ -45,7 +45,7 @@ while(True):
         collector.NextColumn()
         columns.append(columns[-1] + 1)
         last_key_pressed = next_column_key
-    if keyboard.is_pressed(force_measure_key) and last_key_pressed != force_measure_key or True:  # Testing with forced collection
+    if keyboard.is_pressed(force_measure_key) and last_key_pressed != force_measure_key:
         scale.sound()
         collector.AddMeasure(force = True)
         last_key_pressed = force_measure_key
