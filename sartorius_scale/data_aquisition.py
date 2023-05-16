@@ -19,7 +19,7 @@ scale = mettlertoledo.MettlerToledo('COM5')
 scale.ser.timeout = .1
 
 print(scale.ser)
-collector = data_class.DataCollect(scale=scale, unit='g', time_unit='s', delay=1, delay_overall=False)
+collector = data_class.DataCollect(scale=scale, unit='g', time_unit='s', delay=1, delay_overall=True)
 
 break_key = 'q'
 start_key = 's'

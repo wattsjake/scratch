@@ -51,6 +51,7 @@ class DataCollect:
         self.column = 0  # Which column data is being collected in
         self.scale = kwargs.get('scale', None)
         self.valid_measure = []  # Whether or not the final measure is valid
+        self.forced_measures = []  # Number of forced measures in a column so the overall delay won't be affected by length
         self.InitializeColumns()
         
 
@@ -105,8 +106,12 @@ class DataCollect:
 
         column = kwargs.get('column', self.column)   
 
-        # Add measure if the measure is being forced
-        if kwargs.get('force', False):
+        # Add measure if the measure is being forced or if there are no measures yet
+        if kwargs.get('force', False) or self.GetValidLength(column) == 0:
+            # Don't count the measure as forced if it was the first measure
+            if self.GetValidLength(column) > 0:
+                self.forced_measures[column] += 1
+            
             self.__add_measure(*args, **kwargs)
             self.valid_measure[column] = True
             return
@@ -212,7 +217,7 @@ class DataCollect:
 
         # If the delay is based on the overall measures and there are enough measures to do so, return the overall delay
         if (self.delay_overall or kwargs.get('overall', False)):
-            return (self.GetTimeSinceStart(column)) / self.GetValidLength()
+            return (self.GetTimeSinceStart(column)) / (self.GetValidLength(column) - self.forced_measures[column])  # Remove forced measures so only automatic ones are accounted for
         else:
             # Return the time since the last valid measure otherwise
             return time.time() - self.measures[column][-1 - int(self.valid_measure[column] == False)].time  # Do most recent measure if it is valid
@@ -406,4 +411,5 @@ class DataCollect:
         while(len(self.measures) <= kwargs.get('column', self.column)):
             self.measures.append([None for y in range(0)])
             self.valid_measure.append(True)
+            self.forced_measures.append(0)
         
