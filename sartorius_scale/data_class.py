@@ -45,7 +45,7 @@ class DataCollect:
         """        
 
         self.delay = kwargs.get('delay', 0.5)
-        self.delay_overall = kwargs.get('delay_type', True)
+        self.delay_overall = kwargs.get('delay_overall', True)
         self.measures = [[None for x in range(0)] for y in range(0)]  # Uses Data class for storing measures, stores lists of measures for each column
         self.go_measure = False
         self.column = 0  # Which column data is being collected in
@@ -108,21 +108,21 @@ class DataCollect:
         # Add measure if the measure is being forced
         if kwargs.get('force', False):
             self.__add_measure(*args, **kwargs)
+            self.valid_measure[column] = True
+            return
 
         # Do not add the measure if measurements are not being taken
         if (not self.go_measure):
             return
-        
-        # Get the time increment. If delay_overall is true, get the overall delay based on the number of measures.
-        # Otherwise, get the delay since the last measure.
-        time_increment = self.GetTimeIncrement(**kwargs)
 
-        # If the delay has been met, add measure.  Otherwise, update the last measure so it is current.
-        if (time_increment > self.delay):
+        # If the last measure was valid, add a new one. If not, update the last one
+        if (self.valid_measure[column]):
             self.__add_measure(*args, **kwargs)
         else:
             self.__update_measure(*args)
-            self.valid_measure[column] = False
+
+        # If the delay was met, set the last measure to be valid
+        self.valid_measure[column] = self.GetTimeIncrement(**kwargs) > self.delay
 
 
     def __add_measure(self, *args, **kwargs):
@@ -137,7 +137,7 @@ class DataCollect:
 
         column = kwargs.get('column', self.column)
         
-        if(self.valid_measure[column] == True):
+        if(self.valid_measure[column]):
             try:
                 self.measures[column].append(args[0])
             except IndexError:
@@ -146,7 +146,7 @@ class DataCollect:
         
         # If the last measure in the column is not the final measure, update it and say it's the final measure
         self.__update_measure(*args, **kwargs, row = -1)
-        self.valid_measure = True
+        self.valid_measure[column] = True
         
 
     def __update_measure(self, *args, **kwargs):
@@ -211,11 +211,11 @@ class DataCollect:
         column = kwargs.get('column', self.column)
 
         # If the delay is based on the overall measures and there are enough measures to do so, return the overall delay
-        if( (self.delay_overall or kwargs.get('overall', False)) and len(self.measures[column]) > (0 + self.valid_measure[column])):
-            return (time.time() - self.start_times[column]) / len(self.measures[column])
+        if (self.delay_overall or kwargs.get('overall', False)):
+            return (self.GetTimeSinceStart(column)) / self.GetValidLength()
         else:
             # Return the time since the last valid measure otherwise
-            return time.time() - self.measures[column][-1 - self.valid_measure[column]].time
+            return time.time() - self.measures[column][-1 - int(self.valid_measure[column] == False)].time  # Do most recent measure if it is valid
 
 
     def ExportData(self, file_out: str, **kwargs):
@@ -268,7 +268,7 @@ class DataCollect:
                 writer.writerow(writer_row)
 
             
-    def TimeFieldName(self, column: int = None)-> str:
+    def TimeFieldName(self, column: int = None) -> str:
         r"""Gets the time field name for a given column.
 
         Args:
@@ -282,9 +282,25 @@ class DataCollect:
             column = self.column
 
         return 'Time (' + self.measures[column][0].time_unit + ') ' + str(column)
+
+
+    def GetStartTime(self, column: int = None) -> float:
+        r"""Gets the start time for a given column.
+
+        Args:
+            column (int, optional): Column to get start time for. Defaults to current column.
+
+        Returns:
+            float: Start time for given column.
+        """        
+
+        if column == None:
+            column = self.column
+
+        return self.measures[column][0].time
     
 
-    def GetTimeSinceStart(self, column: int = None, row: int = -1)-> float:
+    def GetTimeSinceStart(self, column: int = None, row: int = -1) -> float:
         r"""Gets the time of a data point from the start of the column.
 
         Args:
@@ -298,10 +314,10 @@ class DataCollect:
         if column == None:
             column = self.column
 
-        return self.measures[column][row].time - self.measures[column][0].time
+        return self.measures[column][row].time - self.GetStartTime(column)
     
 
-    def MeasureFieldName(self, column: int = None)-> str:
+    def MeasureFieldName(self, column: int = None) -> str:
         r"""Gets the measure field name for a given column.
 
         Args:
@@ -317,7 +333,7 @@ class DataCollect:
         return 'Measure (' + self.measures[column][0].unit + ') ' + str(column)
     
 
-    def GetMeasure(self, column: int = None, row: int = -1)-> float:
+    def GetMeasure(self, column: int = None, row: int = -1) -> float:
         r"""Gets the measurement of a data point from a given column and row.
 
         Args:
@@ -332,6 +348,22 @@ class DataCollect:
             column = self.column
 
         return self.measures[column][row].measure
+
+
+    def GetValidLength(self, column: int = None) -> int:
+        r"""Gets the number of valid measurements in a given column.
+
+        Args:
+            column (int, optional): Column to get valid length of. Defaults to current column.
+
+        Returns:
+            int: Number of valid measurements in column.
+        """        
+
+        if column == None:
+            column = self.column
+
+        return len(self.measures[column]) - int(self.valid_measure[column] == False)
 
 
     def ChangeColumn(self, column: int, **kwargs):

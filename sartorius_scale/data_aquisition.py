@@ -6,9 +6,6 @@ import time
 import data_class
 import keyboard
 
-def update_tss(start_time):
-    return time.time() - start_time
-
 scale = serial_ports_find.connect_scale()
 
 # Commented out until testing is done
@@ -22,7 +19,7 @@ scale = mettlertoledo.MettlerToledo('COM5')
 scale.ser.timeout = .1
 
 print(scale.ser)
-collector = data_class.DataCollect(scale=scale, unit='g', time_unit='s', delay=1, delay_overall=True)
+collector = data_class.DataCollect(scale=scale, unit='g', time_unit='s', delay=1, delay_overall=False)
 
 break_key = 'q'
 start_key = 's'
