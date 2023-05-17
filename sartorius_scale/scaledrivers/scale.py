@@ -42,13 +42,24 @@ class Scale:
     def set_sound(self, sound):
         self.SOUND = sound
 
-    def set_serial(self, port_: str, ser_settings: dict):
-        self.ser = serial.Serial(port=port_, 
-                                 baudrate = ser_settings.get("baudrate", 9600), 
-                                 bytesize = ser_settings.get("bytesize", serial.EIGHTBITS), 
-                                 stopbits = ser_settings.get("stopbits", serial.STOPBITS_ONE), 
-                                 parity = ser_settings.get("parity", serial.PARITY_NONE), 
-                                 timeout = self.timeout)
+    def set_serial(self, port_: str, *args):
+
+        if args[0] is dict:
+            self.ser = serial.Serial(port=port_, 
+                                     baudrate = args[0].get("baudrate", 9600), 
+                                     bytesize = args[0].get("bytesize", serial.EIGHTBITS), 
+                                     stopbits = args[0].get("stopbits", serial.STOPBITS_ONE), 
+                                     parity = args[0].get("parity", serial.PARITY_NONE), 
+                                     timeout = self.timeout)
+            
+        else:
+            self.ser = serial.Serial(port=port_,
+                                     baudrate = (args[0:1]+[9600])[0],
+                                     bytesize = (args[1:2]+[serial.EIGHTBITS])[0],
+                                     stopbits = (args[2:3]+[serial.STOPBITS_ONE])[0],
+                                     parity = (args[3:4]+[serial.PARITY_NONE])[0],
+                                     timeout = self.timeout)
+        
         return self
 
 
