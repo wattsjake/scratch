@@ -19,7 +19,7 @@ PRODUCT_DRIVERS = {"Entris": Scale,
                    "Entris_II": sartorius.EntrisII}
 
 # Define the scale
-scale = None;
+scale = None
 
 # connect_scale() connects to the scale
 def connect_scale():
