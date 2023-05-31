@@ -54,10 +54,10 @@ class Scale:
             
         else:
             self.ser = serial.Serial(port=port_,
-                                     baudrate = (args[0:1]+[9600])[0],
-                                     bytesize = (args[1:2]+[serial.EIGHTBITS])[0],
-                                     stopbits = (args[2:3]+[serial.STOPBITS_ONE])[0],
-                                     parity = (args[3:4]+[serial.PARITY_NONE])[0],
+                                     baudrate = (args[0:1]+(9600,))[0],
+                                     bytesize = (args[1:2]+(serial.EIGHTBITS,))[0],
+                                     stopbits = (args[2:3]+(serial.STOPBITS_ONE,))[0],
+                                     parity = (args[3:4]+(serial.PARITY_NONE,))[0],
                                      timeout = self.timeout)
         
         return self
