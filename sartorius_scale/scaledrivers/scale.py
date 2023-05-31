@@ -44,7 +44,10 @@ class Scale:
 
     def set_serial(self, port_: str, *args):
 
-        if args[0] is dict:
+        print(args)
+        print(args[0])
+
+        if isinstance(args[0], dict):
             self.ser = serial.Serial(port=port_, 
                                      baudrate = args[0].get("baudrate", 9600), 
                                      bytesize = args[0].get("bytesize", serial.EIGHTBITS), 

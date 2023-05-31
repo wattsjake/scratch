@@ -44,10 +44,11 @@ while True:
         if values['-SCALE-SELECTION-'] in scale.manufacturers.keys():
             manufacturer = scale.manufacturers[values['-SCALE-SELECTION-']]
             if values['-SCALE-MODEL-'] in manufacturer.scales.keys():
-                scale1 = manufacturer.scales[values['-SCALE-MODEL-']](values['-PORT-SELECTION-'])
+                scale1 = scale.manufacturer_scales[manufacturer][values['-SCALE-MODEL-']](values['-PORT-SELECTION-'].device)
             else:
-                scale1 = manufacturer(values['-PORT-SELECTION-'])
-        scale1 = Scale(values['-PORT-SELECTION-'])
+                scale1 = manufacturer(values['-PORT-SELECTION-'].device)
+        else:
+            scale1 = Scale(values['-PORT-SELECTION-'])
         scale_selection_window.close()
         break
 

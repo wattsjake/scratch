@@ -25,7 +25,7 @@ class Entris(Sartorius):
     DEFAULT = {"baudrate": 1200, 
                "bytesize": serial.SEVENBITS, 
                "stopbits": serial.STOPBITS_ONE, 
-               "parity": serial.PARITY_ODD}  # Tuple of Default configuration
+               "parity": serial.PARITY_ODD}  # Dict of Default configuration
 
     def __init__(self, port):
         
