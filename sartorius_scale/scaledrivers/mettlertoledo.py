@@ -35,3 +35,6 @@ class MettlerToledo(Scale):
         weight_data.measure = float(weight_string[6:13])
         weight_data.unit = weight_string[15]
         return weight_data
+    
+# Dictionary of all scales by name
+scales = {"XP205": MettlerToledo}

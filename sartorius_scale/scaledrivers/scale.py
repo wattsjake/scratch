@@ -100,5 +100,5 @@ manufacturers = {"Sartorius": sartorius,
                  "Mettler Toledo": mettlertoledo}  # Dictionary of all possible manufacturers
 
 # Dictionary of all scales by manufacturer
-manufacturer_scales = {sartorius: {"Entris": sartorius.Entris, "Entris II": sartorius.EntrisII},
-          mettlertoledo: {"XP205": mettlertoledo.MettlerToledo}}
+manufacturer_scales = {sartorius: sartorius.scales,
+                       mettlertoledo: mettlertoledo.scales}

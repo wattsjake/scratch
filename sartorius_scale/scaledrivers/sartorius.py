@@ -48,3 +48,6 @@ class EntrisII(Sartorius):
     def __init__(self, port):
         
         self.set_serial(port, self.DEFAULT)
+
+# Dictionary of all scales by name
+scales = {"Entris": Entris, "Entris II": EntrisII}
