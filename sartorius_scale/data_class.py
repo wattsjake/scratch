@@ -2,7 +2,6 @@ import time
 import csv
 from dataclasses import dataclass
 import numpy as np
-from scaledrivers.scale import Scale
 
 
 @dataclass
@@ -30,6 +29,8 @@ class Data:
 
 
 
+
+from scaledrivers.scale import Scale
 
 class DataCollect:
     r"""Collects Data objects and stores them in columns and rows.

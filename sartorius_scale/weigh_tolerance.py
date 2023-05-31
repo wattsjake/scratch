@@ -2,6 +2,7 @@ from serial.tools.list_ports import comports
 import PySimpleGUI as sg
 import data_class
 from scaledrivers import scale, mettlertoledo, sartorius
+from scaledrivers.scale import Scale
 
 
 # From PySimpleGUI cookbook
@@ -20,14 +21,10 @@ sg.theme('DarkTeal1')   # Add a touch of color
 
 # Scale selection layout and information
 
-SARTORIUS_SCALES = {"Entris": sartorius.Entris, "Entris II": sartorius.EntrisII}
-METTLER_TOLEDO_SCALES = {"XP205": mettlertoledo.MettlerToledo}
-MANUFACTURERS = {"Sartorius": SARTORIUS_SCALES, "Mettler Toledo": METTLER_TOLEDO_SCALES}
-
 port_list = comports()
 
 scale_selection_layout = [[sg.Push(), sg.Text('Serial Port:'), sg.Combo(port_list, key='-PORT-SELECTION-')],
-                          [sg.Push(), sg.Text('Please select the scale manufacturer:'), sg.Combo([*MANUFACTURERS], key='-SCALE-SELECTION-', enable_events=True)],
+                          [sg.Push(), sg.Text('Please select the scale manufacturer:'), sg.Combo([*scale.manufacturers], key='-SCALE-SELECTION-', enable_events=True)],
                           [sg.Push(), collapse([[sg.Text('Please select the scale model:'), sg.Combo([], key='-SCALE-MODEL-')]], '-SCALE-MODEL-SECTION-')],
                           [sg.Push(), sg.Button('Continue', key="-CONTINUE-"), sg.Exit(), sg.Push()]]
 
@@ -41,9 +38,16 @@ while True:
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
     if event == '-SCALE-SELECTION-':
-        scale_selection_window['-SCALE-MODEL-'].update(values=[*MANUFACTURERS[values['-SCALE-SELECTION-']]])
+        scale_selection_window['-SCALE-MODEL-'].update(values=[*(scale.manufacturers[values['-SCALE-SELECTION-']].scales)])
         scale_selection_window['-SCALE-MODEL-SECTION-'].update(visible=True)
     if event == '-CONTINUE-':
+        if values['-SCALE-SELECTION-'] in scale.manufacturers.keys():
+            manufacturer = scale.manufacturers[values['-SCALE-SELECTION-']]
+            if values['-SCALE-MODEL-'] in manufacturer.scales.keys():
+                scale1 = manufacturer.scales[values['-SCALE-MODEL-']](values['-PORT-SELECTION-'])
+            else:
+                scale1 = manufacturer(values['-PORT-SELECTION-'])
+        scale1 = Scale(values['-PORT-SELECTION-'])
         scale_selection_window.close()
         break
 

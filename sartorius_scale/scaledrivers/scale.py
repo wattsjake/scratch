@@ -92,3 +92,13 @@ class Scale:
 
     def sound(self):
         return self.send_receive(self.SOUND)
+    
+
+from scaledrivers import mettlertoledo, sartorius
+    
+manufacturers = {"Sartorius": sartorius, 
+                 "Mettler Toledo": mettlertoledo}  # Dictionary of all possible manufacturers
+
+# Dictionary of all scales by manufacturer
+manufacturer_scales = {sartorius: {"Entris": sartorius.Entris, "Entris II": sartorius.EntrisII},
+          mettlertoledo: {"XP205": mettlertoledo.MettlerToledo}}

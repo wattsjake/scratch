@@ -1,5 +1,4 @@
 import serial
-from scaledrivers import scale
 from scaledrivers.scale import Scale
 
 class Sartorius(Scale):

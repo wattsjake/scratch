@@ -1,13 +1,10 @@
 import serial
-from scaledrivers import scale
 from scaledrivers.scale import Scale
 from data_class import Data
 
 # Superclass for all Mettler Toledo scales
 
 class MettlerToledo(Scale):
-
-
 
     def __init__(self, port):
 
