@@ -17,7 +17,7 @@ def collapse(layout, key):
     return sg.pin(sg.Column(layout, key=key, pad=(0, 0)))
 
 class MultiLayoutWindow(sg.Window):
-    
+
     def __init__(self, layouts, **kwargs):
 
         final_layout = []
@@ -64,14 +64,14 @@ port_list = comports()
 scale_selection_layout = [[sg.Push(), sg.Text('Serial Port:'), sg.Combo(port_list, key='-PORT-SELECTION-')],
                           [sg.Push(), sg.Text('Please select the scale manufacturer:'), sg.Combo([*scale.manufacturers], key='-SCALE-SELECTION-', enable_events=True)],
                           [sg.Push(), collapse([[sg.Text('Please select the scale model:'), sg.Combo([], key='-SCALE-MODEL-')]], '-SCALE-MODEL-SECTION-')],
-                          [sg.Push(), sg.Button('Continue', key="-CONTINUE-"), sg.Exit(), sg.Push()]]
+                          [sg.Push(), sg.Button('Continue', key="-CONTINUE-0-"), sg.Exit(), sg.Push()]]
 
 tolerance_input_layout = [[sg.Push(), sg.Text('Please enter the target measurement: '), sg.Input(key='-TARGET-')],
                           [sg.Push(), sg.Text('Please enter the unit (defaults to measurement unit): '), sg.Input(key='-UNIT-')],
                           [sg.Push(), sg.Text('Please select the type of tolerance: '), sg.Radio('Percent (%)', "TOLERANCE-TYPE", default=True, key="-TOLERANCE-IS-PERCENT-"),
                              sg.Radio('Amount (Unit)', "TOLERANCE-TYPE", default=False), sg.Push()],
                           [sg.Push(), sg.Text('Please enter the tolerance: '), sg.Input(key='-TOLERANCE-')],
-                          [sg.Button('Continue'), sg.Exit()]]
+                          [sg.Button('Continue', key="-CONTINUE-1-"), sg.Exit()]]
 
 window = MultiLayoutWindow([scale_selection_layout, tolerance_input_layout], title='Chemistry Lab')
 
@@ -88,10 +88,12 @@ while True:
     event, values = window.read()
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
+
+    # Scale selection events
     if event == '-SCALE-SELECTION-':
         window['-SCALE-MODEL-'].update(values=[*(scale.manufacturers[values['-SCALE-SELECTION-']].scales)])
         window['-SCALE-MODEL-SECTION-'].update(visible=True)
-    if event == '-CONTINUE-':
+    if event == '-CONTINUE-0-':
         if values['-SCALE-SELECTION-'] in scale.manufacturers.keys():
             manufacturer = scale.manufacturers[values['-SCALE-SELECTION-']]
             if values['-SCALE-MODEL-'] in manufacturer.scales.keys():
@@ -100,36 +102,18 @@ while True:
                 scale1 = manufacturer(values['-PORT-SELECTION-'].device)
         else:
             scale1 = Scale(values['-PORT-SELECTION-'])
-        window.close()
-        break
+        window.next_layout()
 
-# create a window with a weight reading and a horizontal rectangle below it, and a vertical rectangle inside of the horizontal rectangle
-# the vertical rectangle will be green if the weight is within tolerance, and red if it is not
-# the horizontal rectangle will be green if the weight is within tolerance, and red if it is not
+    # Tolerance input events
 
-layout = [[sg.Text(key='-CURRENT-MEASURE-'), sg.Text(key='-CURRENT-UNIT-')],
-          [sg.Text(key='-INSTRUCTION-')],
-        #   [sg.], Will be used for bar showing tolerance
-          ]
+    # Tolerance measure events
 
-window = sg.Window('Chemistry Lab', layout)
 
 # Columns:
 # 0. Get the scale that will be used
 # 1. Get the target measurement, unit, and tolerance
 # 2. Measure with scale until a stable measurement within tolerance is reached
-column = 0
-stage_started = False
 
-while True:                             # The Event Loop
-    event, values = window.read()
-    print(event, values)
-    if event in (sg.WIN_CLOSED, 'Exit'):
-        break
-    if stage == 1:
-        if not stage_started:
-            window['-INSTRUCTION-'].update('Please place the object to be measured on the scale and press continue.')
-            stage_started = True
 
 
 window.close()
