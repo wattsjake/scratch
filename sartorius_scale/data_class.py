@@ -2,9 +2,11 @@ import time
 import csv
 from dataclasses import dataclass
 import numpy as np
+from functools import total_ordering
 
 
 @dataclass
+@total_ordering
 class Data:
     r"""Stores data for a given measurement.
 
@@ -26,6 +28,19 @@ class Data:
     unit: str = 'g'  # Default unit is grams
     time_unit: str = 's'  # Default time unit is seconds
     stable: bool = False
+
+    def _is_valid_operand(self, other):
+        return hasattr(other, "measure")
+
+    def __lt__(self, other):
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        return self.measure < other.measure
+    
+    def __eq__(self, other):
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        return self.measure == other.measure
 
 
 
