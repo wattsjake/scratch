@@ -17,17 +17,17 @@ class MettlerToledo(Scale):
 
         self.DEFAULT = {"baudrate": 9600, "bytesize": serial.EIGHTBITS, "stopbits": serial.STOPBITS_ONE, "parity": serial.PARITY_NONE}  # Tuple of Default configuration
 
-        self.TARE = b'T\r\n'
-        self.PRINT_SCREEN = b'SI\r\n'
-        self.ZERO = b'Z\r\n'
-        self.SOUND = b'M12\r\n'
+        self.COMMAND_END = '\r\n'
+        self.TARE = 'T'
+        self.PRINT_SCREEN = 'SI'
+        self.ZERO = 'Z'
+        self.SOUND = 'M12'
         
         self.set_serial(port, self.DEFAULT)
         
     
     def get_weight_data(self):
-        self.ser.write(self.PRINT_SCREEN)
-        weight_string = self.ser.readline().decode('utf-8')
+        weight_string = self.send_receive(self.PRINT_SCREEN)
         # print(weight_string)  # For debugging
         weight_data = Data()
         if(weight_string[2] == 'S'):
