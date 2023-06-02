@@ -25,7 +25,7 @@ def string_to_measure(measure: str):
     for i in range(len(measure)):
         if not measure[len(measure)-i-1].isalpha():
             data.unit = measure[len(measure)-i:]
-            data.value = fn.try_float(measure[:len(measure)-i], on_fail=fn.RAISE)
+            data.measure = fn.try_float(measure[:len(measure)-i], on_fail=fn.RAISE)
             return data
 
 
@@ -88,7 +88,8 @@ tolerance_input_layout = [[sg.Push(), sg.Text('Target measurement (include unit)
                           [sg.Push(), sg.Text('Please enter the tolerance: '), sg.Input(key='-TOLERANCE-', enable_events=True)],
                           [sg.Button('Continue', key="-CONTINUE-1-"), sg.Exit()]]
 
-tolerance_measure_layout = [[sg.Push(), sg.Text('Please tare the scale to begin.', key='-INSTRUCTION-2-')]]
+tolerance_measure_layout = [[sg.Push(), sg.Text('Add weight to begin measuring.', key='-INSTRUCTION-2-'), sg.Push()],
+                            [sg.Push(), sg.Button('Tare', key='-TARE-'), sg.Push()]]
 
 window = MultiLayoutWindow([scale_selection_layout, tolerance_input_layout, tolerance_measure_layout], title='Chemistry Lab')
 
@@ -104,7 +105,7 @@ window['-SCALE-MODEL-SECTION-'].update(visible=False)
 prev_target = ""
 
 while True:
-    event, values = window.read()
+    event, values = window.read(timeout=100)
     print(event, values)
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
@@ -146,6 +147,23 @@ while True:
             
 
     # Tolerance measure events
+    if window.get_layout() == 2:
+        measurement = scale1.get_weight_data()
+        if event == '-TARE-':
+            scale1.tare()
+        if measurement.stable:
+            if abs(measurement.measure - target_measure.measure) <= tolerance:
+                window['-INSTRUCTION-2-'].update("Measurement is within tolerance. Please remove the item from the scale.")
+            else:
+                amount_text = ""
+                if abs(measurement.measure - target_measure.measure) <= tolerance * 1.5:
+                    amount_text = "a little "
+                direction_text = "Add"
+                if measurement > target_measure:
+                    direction_text = "Remove"
+                window['-INSTRUCTION-2-'].update("Measurement not within tolerance. " + direction_text + amount_text + " more.")
+        else:
+            window['-INSTRUCTION-2-'].update("Measurement in progress. Please wait.")
 
 
 # Columns:
