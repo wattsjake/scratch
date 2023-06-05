@@ -2,9 +2,7 @@ from serial.tools.list_ports import comports
 import PySimpleGUI as sg
 import data_class
 from scaledrivers import scale, mettlertoledo, sartorius
-from scaledrivers.scale import Scale
 import fastnumbers as fn
-
 
 # From PySimpleGUI cookbook
 def collapse(layout, key):
@@ -16,17 +14,6 @@ def collapse(layout, key):
     :rtype: sg.pin
     """
     return sg.pin(sg.Column(layout, key=key, pad=(0, 0)))
-
-def string_to_measure(measure: str):
-    measure = measure.replace(" ", "")
-
-    data = data_class.Data()
-
-    for i in range(len(measure)):
-        if not measure[len(measure)-i-1].isalpha():
-            data.unit = measure[len(measure)-i:]
-            data.measure = fn.try_float(measure[:len(measure)-i], on_fail=fn.RAISE)
-            return data
 
 
 class MultiLayoutWindow(sg.Window):
@@ -106,7 +93,7 @@ prev_target = ""
 
 while True:
     event, values = window.read(timeout=100)
-    print(event, values)
+    # print(event, values)
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
 
@@ -123,14 +110,15 @@ while True:
                 else:
                     scale1 = manufacturer(values['-PORT-SELECTION-'].device)
             else:
-                scale1 = Scale(values['-PORT-SELECTION-'])
+                scale1 = scale.Scale(values['-PORT-SELECTION-'])
+            scale1.send_receive("D \"Tolerance\"")
             window.next_layout()
 
     # Tolerance input events
     if window.get_layout() == 1:
         if event == '-TARGET-':
             try:
-                target_measure = string_to_measure(values['-TARGET-'])
+                target_measure = scale.string_to_measure(values['-TARGET-'])
                 prev_target = values['-TARGET-']
             except ValueError:
                 window['-TARGET-'].update(value=prev_target)
@@ -172,5 +160,5 @@ while True:
 # 2. Measure with scale until a stable measurement within tolerance is reached
 
 
-
+scale1.send_receive("DW")
 window.close()

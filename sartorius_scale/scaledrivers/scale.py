@@ -1,4 +1,5 @@
 import serial
+import fastnumbers as fn
 
 # Superclass for all scales
 
@@ -96,6 +97,7 @@ class Scale:
     
 
 from scaledrivers import mettlertoledo, sartorius
+import data_class
     
 manufacturers = {"Sartorius": sartorius, 
                  "Mettler Toledo": mettlertoledo}  # Dictionary of all possible manufacturers
@@ -103,3 +105,14 @@ manufacturers = {"Sartorius": sartorius,
 # Dictionary of all scales by manufacturer
 manufacturer_scales = {sartorius: sartorius.scales,
                        mettlertoledo: mettlertoledo.scales}
+
+def string_to_measure(measure: str):
+    measure = measure.replace(" ", "")
+
+    data = data_class.Data()
+
+    for i in range(len(measure)):
+        if not measure[len(measure)-i-1].isalpha():
+            data.unit = measure[len(measure)-i:]
+            data.measure = fn.try_float(measure[:len(measure)-i], on_fail=fn.RAISE)
+            return data
