@@ -1,10 +1,10 @@
 import serial
-from scaledrivers.scale import Scale
+from scaledrivers import scale
 from data_class import Data
 
 # Superclass for all Mettler Toledo scales
 
-class MettlerToledo(Scale):
+class MettlerToledo(scale.Scale):
 
     # All possible settings for options required to initiate connection listed in case a brute force connection is necessary
     # Default configuration is 19200 baud, 8 data bits, 1 stop bit, odd parity
@@ -27,12 +27,10 @@ class MettlerToledo(Scale):
     
     def get_weight_data(self):
         weight_string = self.send_receive(self.PRINT_SCREEN)
-        # print(weight_string)  # For debugging
-        weight_data = Data()
+        string_end = len(weight_string) - len(self.COMMAND_END)
+        weight_data = scale.string_to_measure(weight_string[4:string_end])
         if(weight_string[2] == 'S'):
             weight_data.stable = True
-        weight_data.measure = float(weight_string[6:13])
-        weight_data.unit = weight_string[15]
         return weight_data
     
 # Dictionary of all scales by name
