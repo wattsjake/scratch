@@ -42,6 +42,9 @@ class Data:
             return NotImplemented
         return self.measure == other.measure
 
+    def __str__(self):
+        return str(self.measure) + ' ' + self.unit + ' at ' + str(self.time) + ' ' + self.time_unit + ' (stable: ' + str(self.stable) + ')'
+
 
 
 
