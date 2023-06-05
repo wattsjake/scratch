@@ -72,7 +72,7 @@ class Scale:
     # This method is used to send a command to the scale and receive a response.
     # After sending a command, the response has to be read or else miscommunication will occur.
     def send_receive(self, command):
-        self.ser.write((command + self.COMMAND_END).encode('utf-8'))
+        self.ser.write((self.COMMAND_START + command + self.COMMAND_END).encode('utf-8'))
         return self.ser.readline()
 
     def __enter__(self):

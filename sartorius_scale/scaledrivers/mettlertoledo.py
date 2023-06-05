@@ -17,6 +17,7 @@ class MettlerToledo(Scale):
 
         self.DEFAULT = {"baudrate": 9600, "bytesize": serial.EIGHTBITS, "stopbits": serial.STOPBITS_ONE, "parity": serial.PARITY_NONE}  # Tuple of Default configuration
 
+        self.COMMAND_START = ''
         self.COMMAND_END = '\r\n'
         self.TARE = 'T'
         self.PRINT_SCREEN = 'SI'

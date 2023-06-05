@@ -3,15 +3,18 @@ from scaledrivers.scale import Scale
 
 class Sartorius(Scale):
 
+    COMMAND_START = '\x1B'
+    COMMAND_END = ''
+
     def __init__(self):
         if not hasattr(self, "TARE"):
-            self.TARE = b'\x1BU'
+            self.TARE = 'U'
         if not hasattr(self, "PRINT_SCREEN"):
-            self.PRINT_SCREEN = b'\x1BP'
+            self.PRINT_SCREEN = 'P'
         if not hasattr(self, "ZERO"):
-            self.ZERO = b'\x1Bf3_'
+            self.ZERO = 'f3_'
         if not hasattr(self, "SOUND"):
-            self.TARE = b'\x1BQ'
+            self.TARE = 'Q'
 
 class Entris(Sartorius):
 
