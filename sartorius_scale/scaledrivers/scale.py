@@ -5,6 +5,7 @@ import serial
 class Scale:
 
     timeout = 0.5  # Default timeout for serial communication
+    encoding = 'utf-8'  # Default encoding for serial communication
 
     # This was made by Noah Mazza.
     def __init__(self):
@@ -72,8 +73,8 @@ class Scale:
     # This method is used to send a command to the scale and receive a response.
     # After sending a command, the response has to be read or else miscommunication will occur.
     def send_receive(self, command):
-        self.ser.write((self.COMMAND_START + command + self.COMMAND_END).encode('utf-8'))
-        return self.ser.readline()
+        self.ser.write((self.COMMAND_START + command + self.COMMAND_END).encode(self.encoding))
+        return self.ser.readline().decode(self.encoding)
 
     def __enter__(self):
         return self
