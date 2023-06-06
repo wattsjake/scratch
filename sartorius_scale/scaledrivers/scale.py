@@ -8,12 +8,13 @@ class Scale:
 
     Stores a collection of methods and attributes that are common to all scales.
 
-    """    
+    """
+
+    TIMEOUT = 0.1  # Default timeout for serial communication
 
     # This was made by Noah Mazza.
-    def __init__(self):
-        self.timeout = 0.5  # Default timeout for serial communication
-        self.encoding = 'utf-8'  # Default encoding for serial communication
+    def __init__(self, **kwargs):
+        self.encoding = kwargs.get('encoding', 'utf-8')  # Encoding for serial communication
 
     # # # SETTERS # # #
     # Used for making a generic scale class in the future.
@@ -57,15 +58,14 @@ class Scale:
             serial.Serial: Serial connection made by scale.
         """        
 
-        if isinstance(args[0], dict):
-            kwargs = args[0]
-            
+        args[0].update(kwargs)  # kwargs override args[0] if they share a key
+
         self.ser = serial.Serial(port=port_, 
-                                 baudrate = kwargs.get("baudrate", 9600), 
-                                 bytesize = kwargs.get("bytesize", serial.EIGHTBITS), 
-                                 stopbits = kwargs.get("stopbits", serial.STOPBITS_ONE), 
-                                 parity = kwargs.get("parity", serial.PARITY_NONE), 
-                                 timeout = self.timeout)
+                                 baudrate = args[0].get("baudrate", 9600), 
+                                 bytesize = args[0].get("bytesize", serial.EIGHTBITS), 
+                                 stopbits = args[0].get("stopbits", serial.STOPBITS_ONE), 
+                                 parity = args[0].get("parity", serial.PARITY_NONE), 
+                                 timeout = args[0].get("timeout", self.TIMEOUT))
         
         return self.ser
 
