@@ -23,6 +23,7 @@ class MettlerToledo(scale.Scale):
     SOUND = 'M12'
 
     def __init__(self, port):
+        scale.Scale.__init__(self)
         self.set_serial(port, self.DEFAULT)
     
     def get_weight_data(self):
