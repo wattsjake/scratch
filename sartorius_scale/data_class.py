@@ -102,7 +102,7 @@ class DataCollect:
         
 
     def StopMeasure(self):
-        """Stop measuring data.
+        r"""Stop measuring data.
 
         Forced measures are still allowed.
         """        
