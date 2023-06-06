@@ -4,14 +4,16 @@ import fastnumbers as fn
 # Superclass for all scales
 
 class Scale:
+    r"""Superclass for all scales.
 
-    timeout = 0.5  # Default timeout for serial communication
-    encoding = 'utf-8'  # Default encoding for serial communication
+    Stores a collection of methods and attributes that are common to all scales.
+
+    """    
 
     # This was made by Noah Mazza.
     def __init__(self):
-        if not 'PRINT_SCREEN' in locals():
-            self.set_print_screen(b'SI\r\n')  # For testing Mettler Toledo scales
+        self.timeout = 0.5  # Default timeout for serial communication
+        self.encoding = 'utf-8'  # Default encoding for serial communication
 
     # def __init__(self, port_, baudrate_, bytesize_, stopbits_, parity_, timeout_):
     #     self.ser = serial.Serial(port = port_, baudrate = baudrate_, bytesize = bytesize_, stopbits = stopbits_, parity = parity_, timeout = timeout_)
@@ -44,25 +46,32 @@ class Scale:
     def set_sound(self, sound):
         self.SOUND = sound
 
-    def set_serial(self, port_: str, *args):
+    def set_serial(self, port_: str, *args, **kwargs) -> serial.Serial:
+        r"""Sets the serial port for the scale.
+
+        Args:
+            port_ (str): Name of port to connect to.
+            *args[0] (dict, optional): Dictionary of keyword arguments for the serial connection.
+            **baudrate (int, optional): Baudrate for serial connection. Default is 9600.
+            **bytesize (int, optional): Bytesize for serial connection. Default is serial.EIGHTBITS.
+            **stopbits (int, optional): Stopbits for serial connection. Default is serial.STOPBITS_ONE.
+            **parity (int, optional): Parity for serial connection. Default is serial.PARITY_NONE.
+
+        Returns:
+            serial.Serial: Serial connection made by scale.
+        """        
 
         if isinstance(args[0], dict):
-            self.ser = serial.Serial(port=port_, 
-                                     baudrate = args[0].get("baudrate", 9600), 
-                                     bytesize = args[0].get("bytesize", serial.EIGHTBITS), 
-                                     stopbits = args[0].get("stopbits", serial.STOPBITS_ONE), 
-                                     parity = args[0].get("parity", serial.PARITY_NONE), 
-                                     timeout = self.timeout)
+            kwargs = args[0]
             
-        else:
-            self.ser = serial.Serial(port=port_,
-                                     baudrate = (args[0:1]+(9600,))[0],
-                                     bytesize = (args[1:2]+(serial.EIGHTBITS,))[0],
-                                     stopbits = (args[2:3]+(serial.STOPBITS_ONE,))[0],
-                                     parity = (args[3:4]+(serial.PARITY_NONE,))[0],
-                                     timeout = self.timeout)
+        self.ser = serial.Serial(port=port_, 
+                                 baudrate = kwargs.get("baudrate", 9600), 
+                                 bytesize = kwargs.get("bytesize", serial.EIGHTBITS), 
+                                 stopbits = kwargs.get("stopbits", serial.STOPBITS_ONE), 
+                                 parity = kwargs.get("parity", serial.PARITY_NONE), 
+                                 timeout = self.timeout)
         
-        return self
+        return self.ser
 
 
     # # # GETTERS # # #
@@ -73,7 +82,19 @@ class Scale:
 
     # This method is used to send a command to the scale and receive a response.
     # After sending a command, the response has to be read or else miscommunication will occur.
-    def send_receive(self, command):
+    def send_receive(self, command: str) -> str:
+        r"""Send a command and receive the scale's response.
+
+        Commands are automatically encoded and responses are automatically decoded.
+        Check the scale's documentation for a list of commands.
+
+        Args:
+            command (str): Command to send to the scale.
+
+        Returns:
+            str: The scale's response to the command.
+        """
+        
         self.ser.write((self.COMMAND_START + command + self.COMMAND_END).encode(self.encoding))
         return self.ser.readline().decode(self.encoding)
 
@@ -99,14 +120,24 @@ class Scale:
 from scaledrivers import mettlertoledo, sartorius
 import data_class
     
+# Dictionary of all possible manufacturers
 manufacturers = {"Sartorius": sartorius, 
-                 "Mettler Toledo": mettlertoledo}  # Dictionary of all possible manufacturers
+                 "Mettler Toledo": mettlertoledo}  
 
 # Dictionary of all scales by manufacturer
 manufacturer_scales = {sartorius: sartorius.scales,
                        mettlertoledo: mettlertoledo.scales}
 
-def string_to_measure(measure: str):
+def string_to_measure(measure: str) -> data_class.Data:
+    r"""Converts a string to a Data object.
+
+    Args:
+        measure (str): Measurement in string form. Must be in the form of a number followed by a unit.
+            All spaces will be removed before parsing.
+
+    Returns:
+        data_class.Data: Measure with the given value and unit.
+    """    
     measure = measure.replace(" ", "")
 
     data = data_class.Data()
