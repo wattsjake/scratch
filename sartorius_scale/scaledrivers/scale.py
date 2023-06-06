@@ -15,10 +15,6 @@ class Scale:
         self.timeout = 0.5  # Default timeout for serial communication
         self.encoding = 'utf-8'  # Default encoding for serial communication
 
-    # def __init__(self, port_, baudrate_, bytesize_, stopbits_, parity_, timeout_):
-    #     self.ser = serial.Serial(port = port_, baudrate = baudrate_, bytesize = bytesize_, stopbits = stopbits_, parity = parity_, timeout = timeout_)
-    #     return self
-
     # # # SETTERS # # #
     # Used for making a generic scale class in the future.
 
