@@ -146,10 +146,10 @@ while True:
                 amount_text = ""
                 if abs(measurement.measure - target_measure.measure) <= tolerance * 1.5:
                     amount_text = "a little "
-                direction_text = "Add"
+                direction_text = "Add "
                 if measurement > target_measure:
-                    direction_text = "Remove"
-                window['-INSTRUCTION-2-'].update("Measurement not within tolerance. " + direction_text + amount_text + " more.")
+                    direction_text = "Remove "
+                window['-INSTRUCTION-2-'].update("Measurement not within tolerance. " + direction_text + amount_text + "more.")
         else:
             window['-INSTRUCTION-2-'].update("Measurement in progress. Please wait.")
 
