@@ -29,6 +29,9 @@ class MettlerToledo(scale.Scale):
         if(weight_string[2] == 'S'):
             weight_data.stable = True
         return weight_data
+
+    def __str__(self):
+        return "Mettler Toledo"
     
 # Dictionary of all scales by name
 scales = {"XP205": MettlerToledo}

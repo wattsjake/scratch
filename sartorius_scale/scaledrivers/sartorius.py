@@ -18,6 +18,9 @@ class Sartorius(Scale):
 
         super().__init__(port, **kwargs)
 
+    def __str__(self):
+        return "Sartorius"
+
 class Entris(Sartorius):
 
     # All possible settings for options required to initiate connection listed in case a brute force connection is necessary
@@ -31,6 +34,9 @@ class Entris(Sartorius):
                "bytesize": serial.SEVENBITS, 
                "stopbits": serial.STOPBITS_ONE, 
                "parity": serial.PARITY_ODD}  # Dict of Default configuration
+    
+    def __str__(self):
+        return "Entris"
 
 class EntrisII(Sartorius):
 
@@ -45,6 +51,9 @@ class EntrisII(Sartorius):
                "bytesize": serial.EIGHTBITS, 
                "stopbits": serial.STOPBITS_ONE, 
                "parity": serial.PARITY_ODD}  # Dict of Default configuration
+    
+    def __str__(self):
+        return "Entris II"
 
 # Dictionary of all scales by name
 scales = {"Entris": Entris, "Entris II": EntrisII}

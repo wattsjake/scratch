@@ -11,7 +11,6 @@ class Scale:
 
     TIMEOUT = 0.1  # Default timeout for serial communication
 
-    # This was made by Noah Mazza.
     def __init__(self, port: str, **kwargs):
         if not hasattr(self, "DEFAULT_SERIAL"):
             self.DEFAULT_SERIAL = {}
@@ -67,14 +66,8 @@ class Scale:
         return self.ser
 
 
-    # # # GETTERS # # #
-    # Will fill in later as needed
-
-
     # # # METHODS # # #
 
-    # This method is used to send a command to the scale and receive a response.
-    # After sending a command, the response has to be read or else miscommunication will occur.
     def send_receive(self, command: str) -> str:
         r"""Send a command and receive the scale's response.
 
