@@ -13,7 +13,7 @@ class MettlerToledo(scale.Scale):
     STOPBITS = (serial.STOPBITS_ONE, serial.STOPBITS_TWO)  # Tuple of possible stop bits
     PARITIES = (serial.PARITY_NONE, serial.PARITY_ODD, serial.PARITY_EVEN)  # Tuple of possible parities
 
-    DEFAULT = {"baudrate": 9600, "bytesize": serial.EIGHTBITS, "stopbits": serial.STOPBITS_ONE, "parity": serial.PARITY_NONE}  # Tuple of Default configuration
+    # Default settings for serial connection are the standard
 
     COMMAND_START = ''
     COMMAND_END = '\r\n'
@@ -21,10 +21,6 @@ class MettlerToledo(scale.Scale):
     PRINT_SCREEN = 'SI'
     ZERO = 'Z'
     SOUND = 'M12'
-
-    def __init__(self, port, **kwargs):
-        scale.Scale.__init__(self, kwargs)
-        self.set_serial(port, self.DEFAULT, kwargs)
     
     def get_weight_data(self):
         weight_string = self.send_receive(self.PRINT_SCREEN)

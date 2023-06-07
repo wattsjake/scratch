@@ -6,7 +6,7 @@ class Sartorius(Scale):
     COMMAND_START = '\x1B'
     COMMAND_END = ''
 
-    def __init__(self):
+    def __init__(self, port: str, **kwargs):
         if not hasattr(self, "TARE"):
             self.TARE = 'U'
         if not hasattr(self, "PRINT_SCREEN"):
@@ -15,6 +15,8 @@ class Sartorius(Scale):
             self.ZERO = 'f3_'
         if not hasattr(self, "SOUND"):
             self.TARE = 'Q'
+
+        super().__init__(port, **kwargs)
 
 class Entris(Sartorius):
 
@@ -25,14 +27,10 @@ class Entris(Sartorius):
     STOPBITS = (serial.STOPBITS_ONE, serial.STOPBITS_TWO)  # Tuple of possible stop bits
     PARITIES = (serial.PARITY_NONE, serial.PARITY_ODD, serial.PARITY_EVEN)  # Tuple of possible parities
 
-    DEFAULT = {"baudrate": 1200, 
+    DEFAULT_SERIAL = {"baudrate": 1200, 
                "bytesize": serial.SEVENBITS, 
                "stopbits": serial.STOPBITS_ONE, 
                "parity": serial.PARITY_ODD}  # Dict of Default configuration
-
-    def __init__(self, port):
-        
-        self.set_serial(port, self.DEFAULT)
 
 class EntrisII(Sartorius):
 
@@ -43,14 +41,10 @@ class EntrisII(Sartorius):
     STOPBITS = (serial.STOPBITS_ONE, serial.STOPBITS_TWO)  # Tuple of possible stop bits
     PARITIES = (serial.PARITY_NONE, serial.PARITY_ODD, serial.PARITY_EVEN)  # Tuple of possible parities
 
-    DEFAULT = {"baudrate": 19200, 
+    DEFAULT_SERIAL = {"baudrate": 19200, 
                "bytesize": serial.EIGHTBITS, 
                "stopbits": serial.STOPBITS_ONE, 
                "parity": serial.PARITY_ODD}  # Dict of Default configuration
-
-    def __init__(self, port):
-        
-        self.set_serial(port, self.DEFAULT)
 
 # Dictionary of all scales by name
 scales = {"Entris": Entris, "Entris II": EntrisII}

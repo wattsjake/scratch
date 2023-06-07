@@ -7,13 +7,15 @@ class Scale:
     r"""Superclass for all scales.
 
     Stores a collection of methods and attributes that are common to all scales.
-
     """
 
     TIMEOUT = 0.1  # Default timeout for serial communication
 
     # This was made by Noah Mazza.
-    def __init__(self, **kwargs):
+    def __init__(self, port: str, **kwargs):
+        if not hasattr(self, "DEFAULT_SERIAL"):
+            self.DEFAULT_SERIAL = {}
+        self.set_serial(port, **kwargs)
         self.encoding = kwargs.get('encoding', 'utf-8')  # Encoding for serial communication
 
     # # # SETTERS # # #
@@ -43,29 +45,24 @@ class Scale:
     def set_sound(self, sound):
         self.SOUND = sound
 
-    def set_serial(self, port_: str, *args, **kwargs) -> serial.Serial:
+    def set_serial(self, port_: str, **kwargs) -> serial.Serial:
         r"""Sets the serial port for the scale.
+
+        If passed with only a port, the scale will use the default settings for the given scale.
+        If the scale has no default settings, it will use the default settings for the serial module.
 
         Args:
             port_ (str): Name of port to connect to.
-            *args[0] (dict, optional): Dictionary of keyword arguments for the serial connection.
-            **baudrate (int, optional): Baudrate for serial connection. Default is 9600.
-            **bytesize (int, optional): Bytesize for serial connection. Default is serial.EIGHTBITS.
-            **stopbits (int, optional): Stopbits for serial connection. Default is serial.STOPBITS_ONE.
-            **parity (int, optional): Parity for serial connection. Default is serial.PARITY_NONE.
+            **baudrate (int, optional): Baudrate for serial connection.
+            **bytesize (int, optional): Bytesize for serial connection.
+            **stopbits (int, optional): Stopbits for serial connection.
+            **parity (int, optional): Parity for serial connection.
 
         Returns:
             serial.Serial: Serial connection made by scale.
-        """        
+        """
 
-        args[0].update(kwargs)  # kwargs override args[0] if they share a key
-
-        self.ser = serial.Serial(port=port_, 
-                                 baudrate = args[0].get("baudrate", 9600), 
-                                 bytesize = args[0].get("bytesize", serial.EIGHTBITS), 
-                                 stopbits = args[0].get("stopbits", serial.STOPBITS_ONE), 
-                                 parity = args[0].get("parity", serial.PARITY_NONE), 
-                                 timeout = args[0].get("timeout", self.TIMEOUT))
+        self.ser = serial.Serial(port=port_, **(self.DEFAULT_SERIAL | kwargs))
         
         return self.ser
 
