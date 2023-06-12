@@ -1,8 +1,23 @@
 import serial
 import fastnumbers as fn
 
-# Superclass for all scales
+# Copied over from StackOverflow; author is Jonathan Eunice
+def custom_class_repr(name, *base_classes):
+    r"""Factory that returns custom metaclass with a class ``__repr__`` that
+    returns ``name``.
+    """
 
+    if not base_classes:
+        bases = (type,)
+    else:
+        bases = []
+        for base in base_classes:
+            bases.append(type(base))
+        bases = tuple(bases)
+
+    return type('MetaScale', bases, {'__repr__': lambda self: name})
+
+# Superclass for all scales
 class Scale:
     r"""Superclass for all scales.
 
@@ -105,14 +120,10 @@ class Scale:
 
 from scaledrivers import mettlertoledo, sartorius
 import data_class
-    
-# Dictionary of all possible manufacturers
-manufacturers = {"Sartorius": sartorius, 
-                 "Mettler Toledo": mettlertoledo}  
 
 # Dictionary of all scales by manufacturer
-manufacturer_scales = {sartorius: sartorius.scales,
-                       mettlertoledo: mettlertoledo.scales}
+manufacturer_scales = {sartorius.Sartorius: sartorius.scales,
+                       mettlertoledo.MettlerToledo: mettlertoledo.scales}
 
 def string_to_measure(measure: str) -> data_class.Data:
     r"""Converts a string to a Data object.

@@ -65,7 +65,7 @@ sg.theme('DarkTeal1')   # Add a touch of color
 port_list = comports()
 
 scale_selection_layout = [[sg.Push(), sg.Text('Serial Port:'), sg.Combo(port_list, key='-PORT-SELECTION-')],
-                          [sg.Push(), sg.Text('Scale Manufacturer:'), sg.Combo([*scale.manufacturers], key='-SCALE-SELECTION-', enable_events=True)],
+                          [sg.Push(), sg.Text('Scale Manufacturer:'), sg.Combo([*scale.manufacturer_scales], key='-SCALE-SELECTION-', enable_events=True)],
                           [sg.Push(), collapse([[sg.Text('Scale Model:'), sg.Combo([], key='-SCALE-MODEL-')]], '-SCALE-MODEL-SECTION-')],
                           [sg.Push(), sg.Button('Continue', key="-CONTINUE-0-"), sg.Exit(), sg.Push()]]
 
@@ -100,13 +100,13 @@ while True:
     # Scale selection events
     if window.get_layout() == 0:
         if event == '-SCALE-SELECTION-':
-            window['-SCALE-MODEL-'].update(values=[*(scale.manufacturers[values['-SCALE-SELECTION-']].scales)])
+            window['-SCALE-MODEL-'].update(values=scale.manufacturer_scales[values['-SCALE-SELECTION-']])
             window['-SCALE-MODEL-SECTION-'].update(visible=True)
         if event == '-CONTINUE-0-':
-            if values['-SCALE-SELECTION-'] in scale.manufacturers.keys():
-                manufacturer = scale.manufacturers[values['-SCALE-SELECTION-']]
-                if values['-SCALE-MODEL-'] in manufacturer.scales.keys():
-                    scale1 = scale.manufacturer_scales[manufacturer][values['-SCALE-MODEL-']](values['-PORT-SELECTION-'].device)
+            if values['-SCALE-SELECTION-'] in scale.manufacturer_scales.keys():
+                manufacturer = values['-SCALE-SELECTION-']
+                if values['-SCALE-MODEL-'] in scale.manufacturer_scales[manufacturer]:
+                    scale1 = values['-SCALE-MODEL-'](values['-PORT-SELECTION-'].device)
                 else:
                     scale1 = manufacturer(values['-PORT-SELECTION-'].device)
             else:

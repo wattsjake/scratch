@@ -1,7 +1,10 @@
 import serial
-from scaledrivers.scale import Scale
+from scaledrivers import scale
+import six
 
-class Sartorius(Scale):
+# Superclass for all Sartorius scales
+@six.add_metaclass(scale.custom_class_repr("Sartorius"))
+class Sartorius(scale.Scale):
 
     COMMAND_START = '\x1B'
     COMMAND_END = ''
@@ -21,6 +24,7 @@ class Sartorius(Scale):
     def __str__(self):
         return "Sartorius"
 
+@six.add_metaclass(scale.custom_class_repr("Entris", Sartorius))
 class Entris(Sartorius):
 
     # All possible settings for options required to initiate connection listed in case a brute force connection is necessary
@@ -38,6 +42,7 @@ class Entris(Sartorius):
     def __str__(self):
         return "Entris"
 
+@six.add_metaclass(scale.custom_class_repr("Entris II", Sartorius))
 class EntrisII(Sartorius):
 
     # All possible settings for options required to initiate connection listed in case a brute force connection is necessary
@@ -55,5 +60,5 @@ class EntrisII(Sartorius):
     def __str__(self):
         return "Entris II"
 
-# Dictionary of all scales by name
-scales = {"Entris": Entris, "Entris II": EntrisII}
+# List of all scales
+scales = [Entris, EntrisII]

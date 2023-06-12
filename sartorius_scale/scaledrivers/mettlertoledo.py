@@ -1,9 +1,10 @@
 import serial
 from scaledrivers import scale
 from data_class import Data
+import six
 
 # Superclass for all Mettler Toledo scales
-
+@six.add_metaclass(scale.custom_class_repr("Mettler Toledo"))
 class MettlerToledo(scale.Scale):
 
     # All possible settings for options required to initiate connection listed in case a brute force connection is necessary
@@ -32,6 +33,6 @@ class MettlerToledo(scale.Scale):
 
     def __str__(self):
         return "Mettler Toledo"
-    
-# Dictionary of all scales by name
-scales = {"XP205": MettlerToledo}
+
+# List of all scales
+scales = [MettlerToledo]
