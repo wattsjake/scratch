@@ -111,7 +111,7 @@ while True:
                     scale1 = manufacturer(values['-PORT-SELECTION-'].device)
             else:
                 scale1 = scale.Scale(values['-PORT-SELECTION-'])
-            scale1.send_receive("D \"Tolerance\"")
+            scale1.send_receive("D \"Lab\"")
             window.next_layout()
 
     # Tolerance input events
