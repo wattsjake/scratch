@@ -1,7 +1,6 @@
 from serial.tools.list_ports import comports
 import PySimpleGUI as sg
-import data_class
-from scaledrivers import scale, mettlertoledo, sartorius
+from scaledrivers import scale
 import fastnumbers as fn
 
 # From PySimpleGUI cookbook
