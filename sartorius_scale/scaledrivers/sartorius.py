@@ -18,6 +18,8 @@ class Sartorius(scale.Scale):
             self.ZERO = 'f3_'
         if not hasattr(self, "SOUND"):
             self.TARE = 'Q'
+        if not hasattr(self, "SCALE_INFO"):
+            self.SCALE_INFO = 'x1_'
 
         super().__init__(port, **kwargs)
 

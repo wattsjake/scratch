@@ -22,6 +22,7 @@ class MettlerToledo(scale.Scale):
     PRINT_SCREEN = 'SI'
     ZERO = 'Z'
     SOUND = 'M12'
+    SCALE_INFO = 'I0'
     
     def get_weight_data(self):
         weight_string = self.send_receive(self.PRINT_SCREEN)
