@@ -24,12 +24,12 @@ class Scale:
     Stores a collection of methods and attributes that are common to all scales.
     """
 
-    TIMEOUT = 0.1  # Default timeout for serial communication
+    timeout = 0.5
 
     def __init__(self, port: str, **kwargs):
         if not hasattr(self, "DEFAULT_SERIAL"):
             self.DEFAULT_SERIAL = {}
-        self.set_serial(port, **kwargs)
+        self.set_serial(port, **kwargs, timeout=self.timeout)
         self.encoding = kwargs.get('encoding', 'utf-8')  # Encoding for serial communication
 
     # # # SETTERS # # #
@@ -95,9 +95,16 @@ class Scale:
         Returns:
             str: The scale's response to the command.
         """
+
+        # self.ser.reset_output_buffer()
         
+        response = ""
         self.ser.write((self.COMMAND_START + command + self.COMMAND_END).encode(self.encoding))
-        return self.ser.readline().decode(self.encoding)
+        next_line = self.ser.readline().decode(self.encoding)
+        while next_line != "":
+            response += next_line
+            next_line = self.ser.readline().decode(self.encoding)
+        return response
 
     def __enter__(self):
         return self
