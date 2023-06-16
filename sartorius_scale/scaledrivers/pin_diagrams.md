@@ -10,27 +10,25 @@ Mettler Toledo
 
 **PG-S**\*
 
-| Pin on Interface | Pin on Scale | Function  |
-|------------------|--------------|-----------|
-| 2                | 2            | RxD       |
-| 3                | 3            | TxD       |
-| 4                | 4            | DTR       |
-| 5                | 5            | SGND      |
-| 6                | 6            | DSR       |
-|                  | 7            | Loop to 8 |
-|                  | 8            | Loop to 7 |
+| Interface | Flow | Scale | Function |
+|-----------|------|-------|----------|
+|         2 |  ->  | 2     | TxD      |
+|         3 |  <-  | 3     | RxD      |
+|         4 |  ->  | 4     | DTR      |
+|         5 |  --  | 5     | SGND     |
+|         6 |  <-  | 6     | DSR      |
+|           |      | 7, 8  | Loop     |
 
 **Excellence**
 
-| Pin on Interface | Pin on Scale | Function  |
-|------------------|--------------|-----------|
-| 2                | 2            | RxD       |
-| 3                | 3            | TxD       |
-| 5                | 5            | SGND      |
-| 7                | 8            | CTS       |
-| 8                | 7            | RTS       |
-|                  | 4            | Loop to 6 |
-|                  | 6            | Loop to 4 |
+| Interface | Flow | Scale | Function |
+|----------:|:----:|-------|----------|
+|         2 |  <-  | 2     | RxD      |
+|         3 |  ->  | 3     | TxD      |
+|         5 |  --  | 5     | SGND     |
+|         7 |  <-  | 8     | CTS      |
+|         8 |  ->  | 7     | RTS      |
+|           |      | 4, 6  | Loop     |
 
 =====
 
@@ -42,11 +40,11 @@ Sartorius
 DB-9
 | Interface | Flow | Scale    | Function |
 |----------:|:----:|----------|----------|
-| 2         |  <-  | 2        | RxD      |
-| 3         |  ->  | 3        | TxD      |
-| 4         |  ->  | 5        | CTS      |
-| 5         |  --  | 4, 7, 14 | GND      |
-| 6, 8      |  <-  | 20       | DTR      |
+|         2 |  <-  | 2        | RxD      |
+|         3 |  ->  | 3        | TxD      |
+|         4 |  ->  | 5        | CTS      |
+|         5 |  --  | 4, 7, 14 | GND      |
+|      6, 8 |  <-  | 20       | DTR      |
 
 =====
 
