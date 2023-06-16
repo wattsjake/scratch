@@ -37,6 +37,19 @@ Mettler Toledo
 Sartorius
 ---------
 
+**Entris**
+
+DB-9
+| Interface | Flow | Scale    | Function |
+|----------:|:----:|----------|----------|
+| 2         |  <-  | 2        | RxD      |
+| 3         |  ->  | 3        | TxD      |
+| 4         |  ->  | 5        | CTS      |
+| 5         |  --  | 4, 7, 14 | GND      |
+| 6, 8      |  <-  | 20       | DTR      |
+
 =====
 
 \* Compatible with a simple USB-to-Serial adapter
+
+[Markdown Table Generator](https://www.tablesgenerator.com/markdown_tables)
