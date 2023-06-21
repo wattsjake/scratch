@@ -98,12 +98,12 @@ class Scale:
 
         # self.ser.reset_output_buffer()
         
-        response = ""
         self.ser.write((self.COMMAND_START + command + self.COMMAND_END).encode(self.encoding))
         next_line = self.ser.readline().decode(self.encoding)
-        while next_line != "":
-            response += next_line
+        response = next_line
+        while not self.response_complete(next_line):
             next_line = self.ser.readline().decode(self.encoding)
+            response += next_line
         return response
 
     def __enter__(self):
