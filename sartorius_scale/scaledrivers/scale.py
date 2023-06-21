@@ -25,7 +25,7 @@ class Scale:
     Stores a collection of methods and attributes that are common to all scales.
     """
 
-    timeout = 1
+    timeout = 2
 
     def __init__(self, port: str, **kwargs):
         if not hasattr(self, "DEFAULT_SERIAL"):
@@ -100,12 +100,11 @@ class Scale:
         # self.ser.reset_output_buffer()
         
         self.ser.write((self.COMMAND_START + command + self.COMMAND_END).encode(self.encoding))
-        response = self.ser.readline().decode(self.encoding)
-        await asyncio.sleep(0.3)
-        if self.ser.in_waiting:
-            self.ser.write(("invalid").encode(self.encoding))
-            while response[-len(self.RES_ERROR):] != self.RES_ERROR:
-                response += self.ser.read_until(self.RES_ERROR).decode(self.encoding)
+        next_line = self.ser.readline().decode(self.encoding)
+        response = next_line
+        while not self.response_complete(next_line):
+            next_line = self.ser.readline().decode(self.encoding)
+            response += next_line
         return response
 
     def __enter__(self):
