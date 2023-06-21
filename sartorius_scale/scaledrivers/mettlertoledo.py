@@ -33,6 +33,9 @@ class MettlerToledo(scale.Scale):
             weight_data.stable = True
         return weight_data
 
+    def response_complete(self, next_line):
+        return not " B " in next_line
+
     def __str__(self):
         return "Mettler Toledo"
 
