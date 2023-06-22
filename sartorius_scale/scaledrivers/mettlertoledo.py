@@ -18,11 +18,12 @@ class MettlerToledo(scale.Scale):
 
     COMMAND_START = ''
     COMMAND_END = '\r\n'
+    CANCEL = '@'
     TARE = 'T'
     PRINT_SCREEN = 'SI'
     ZERO = 'Z'
     SOUND = 'M12'
-    SCALE_INFO = 'I0'
+    SCALE_INFO = 'I2'
     RES_ERROR = 'ES'
     
     def get_weight_data(self):
@@ -35,6 +36,11 @@ class MettlerToledo(scale.Scale):
     
     def response_complete(self, next_line):
         return not " B " in next_line
+
+    def test_port(self):
+        response = self.send_receive(self.SCALE_INFO)
+        response.split(" ")
+        return response[1] == "A"
 
     def __str__(self):
         return "Mettler Toledo"
