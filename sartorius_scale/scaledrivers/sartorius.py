@@ -21,10 +21,17 @@ class Sartorius(scale.Scale):
         if not hasattr(self, "SCALE_INFO"):
             self.SCALE_INFO = 'x1_'
 
-        super().__init__(port, **kwargs)
+        scale.Scale.__init__(self, port, **kwargs)
 
     def __str__(self):
         return "Sartorius"
+    
+    def test_port(self):
+        response = self.send_receive(self.SCALE_INFO)
+        return False  # Not yet implemented
+
+    def response_complete(self, next_line):
+        return True  # Not yet implemented
 
 @six.add_metaclass(scale.custom_class_repr("Entris", Sartorius))
 class Entris(Sartorius):
