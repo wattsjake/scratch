@@ -1,4 +1,5 @@
 import serial
+from serial.tools.list_ports import comports
 import fastnumbers as fn
 
 # Copied over from StackOverflow; author is Jonathan Eunice
@@ -15,7 +16,7 @@ def custom_class_repr(name, *base_classes):
             bases.append(type(base))
         bases = tuple(bases)
 
-    return type('MetaScale', bases, {'__repr__': lambda self: name})
+    return type('MetaScale', bases, {'__str__': lambda self: name})
 
 # Superclass for all scales
 class Scale:
@@ -96,14 +97,24 @@ class Scale:
             str: The scale's response to the command.
         """
 
-        # self.ser.reset_output_buffer()
+        self.ser.reset_output_buffer()
+        self.ser.read_all()
         
         self.ser.write((self.COMMAND_START + command + self.COMMAND_END).encode(self.encoding))
         next_line = self.ser.readline().decode(self.encoding)
         response = next_line
-        while not self.response_complete(next_line):
+        while not (self.response_complete(next_line) or next_line == ""):
             next_line = self.ser.readline().decode(self.encoding)
             response += next_line
+
+        # If the scale is doing a long command, it might not finish within the timeout, returning a blank line
+        # If this happens, the command should be cancelled so it doesn't mess up the next command
+        # This feature is not implemented yet
+
+        # if next_line == "":
+        #     self.ser.write((self.COMMAND_START + self.CANCEL + self.COMMAND_END).encode(self.encoding))
+        #     response += self.ser.readline().decode(self.encoding)
+
         return response
 
     def __enter__(self):
@@ -151,3 +162,25 @@ def string_to_measure(measure: str) -> data_class.Data:
             data.unit = measure[len(measure)-i:]
             data.measure = fn.try_float(measure[:len(measure)-i], on_fail=fn.RAISE)
             return data
+
+def auto_connect_scale():
+    for port in comports():
+        for manufacturer in manufacturer_scales:
+            try:
+                scale1 = manufacturer(port.device)
+                if scale1.test_port():
+                    scale1.ser.close()
+                    for series in manufacturer_scales[manufacturer]:
+                        try:
+                            scale2 = series(port.device)
+                            if scale2.test_port():
+                                return scale2
+                        except serial.SerialException:
+                            continue
+                    return scale1
+                scale1.ser.close()
+            except serial.SerialException:
+                continue
+
+    return None
+                
