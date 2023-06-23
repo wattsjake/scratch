@@ -1,4 +1,4 @@
-from scaledrivers import scale, mettlertoledo
+from scaledrivers import scale
 
 scale1 = scale.auto_connect_scale()
 if scale1 is None:
