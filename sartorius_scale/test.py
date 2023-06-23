@@ -1,7 +1,12 @@
 from scaledrivers import scale, mettlertoledo
 
-scale = mettlertoledo.MettlerToledo("COM5")
+scale1 = scale.auto_connect_scale()
+if scale1 is None:
+    print("No scale found")
+    exit()
+print("Scale found: " + str(scale1))
+
 cin = input()
 while cin != 'q':
-    print(scale.send_receive(cin))
+    print(scale1.send_receive(cin))
     cin = input()
