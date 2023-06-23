@@ -42,6 +42,8 @@ class MettlerToledo(scale.Scale):
         while response == "ES\r\n":
             response = self.send_receive(self.SCALE_INFO)
         response = response.split(" ")
+        if len(response) < 2:
+            return False
         return response[1] == "A"
 
     def __str__(self):
