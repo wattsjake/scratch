@@ -85,8 +85,14 @@ window = MultiLayoutWindow([scale_selection_layout, tolerance_input_layout, tole
 # window = sg.Window('Scale Selection', scale_selection_layout)
 
 window.read(timeout=0)
-window.change_layout(0)
-window['-SCALE-MODEL-SECTION-'].update(visible=False)
+
+scale1 = scale.auto_connect_scale()
+if scale1 is None:
+    window.change_layout(0)
+    window['-SCALE-MODEL-SECTION-'].update(visible=False)
+else:
+    scale1.send_receive("D \"Lab\"")
+    window.change_layout(1)
 
 prev_target = ""
 
