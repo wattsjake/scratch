@@ -39,6 +39,8 @@ class MettlerToledo(scale.Scale):
 
     def test_port(self) -> bool:
         response = self.send_receive(self.SCALE_INFO)
+        while response == "ES\r\n":
+            response = self.send_receive(self.SCALE_INFO)
         response.split(" ")
         if isinstance(response, str):
             return False
