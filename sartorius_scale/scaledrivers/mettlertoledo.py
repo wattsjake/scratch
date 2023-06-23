@@ -37,9 +37,11 @@ class MettlerToledo(scale.Scale):
     def response_complete(self, next_line):
         return not " B " in next_line
 
-    def test_port(self):
+    def test_port(self) -> bool:
         response = self.send_receive(self.SCALE_INFO)
         response.split(" ")
+        if isinstance(response, str):
+            return False
         return response[1] == "A"
 
     def __str__(self):
