@@ -147,22 +147,28 @@ while True:
 
     # Tolerance measure events
     if window.get_layout() == 2:
-        measurement = scale1.get_weight_data()
+        try:
+            measurement = scale1.get_weight_data()
+
+            if measurement.stable:
+                if abs(measurement.measure - target_measure.measure) <= tolerance * target_measure.measure:
+                    window['-INSTRUCTION-2-'].update("Measurement is within tolerance. Please remove the item from the scale.")
+                else:
+                    amount_text = ""
+                    if abs(measurement.measure - target_measure.measure) <= tolerance * 1.5 * target_measure.measure:
+                        amount_text = "a little "
+                    direction_text = "Add "
+                    if measurement > target_measure:
+                        direction_text = "Remove "
+                    window['-INSTRUCTION-2-'].update("Measurement not within tolerance. " + direction_text + amount_text + "more.")
+            else:
+                window['-INSTRUCTION-2-'].update("Measurement in progress. Please wait.")
+        except scale.ScaleMeasurementException as e:
+            window['-INSTRUCTION-2-'].update(e)
+
         if event == '-TARE-':
             scale1.tare()
-        if measurement.stable:
-            if abs(measurement.measure - target_measure.measure) <= tolerance * target_measure.measure:
-                window['-INSTRUCTION-2-'].update("Measurement is within tolerance. Please remove the item from the scale.")
-            else:
-                amount_text = ""
-                if abs(measurement.measure - target_measure.measure) <= tolerance * 1.5 * target_measure.measure:
-                    amount_text = "a little "
-                direction_text = "Add "
-                if measurement > target_measure:
-                    direction_text = "Remove "
-                window['-INSTRUCTION-2-'].update("Measurement not within tolerance. " + direction_text + amount_text + "more.")
-        else:
-            window['-INSTRUCTION-2-'].update("Measurement in progress. Please wait.")
+        
 
 
 # Columns:
