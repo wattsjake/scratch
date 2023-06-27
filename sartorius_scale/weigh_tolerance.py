@@ -20,34 +20,29 @@ class MultiLayoutWindow(sg.Window):
     def __init__(self, layouts, **kwargs):
 
         final_layout = []
+        self.layout_keys = list(layouts.keys())
 
-        for layout in layouts:
-            final_layout.append(sg.Column(layout=layout, visible=False, key=self.get_layout_key(layouts.index(layout))))
+        for layout_key in self.layout_keys:
+            final_layout.append(sg.Column(
+                layout=layouts[layout_key], 
+                visible=(layout_key == kwargs.get("start_layout", self.layout_keys[0])), 
+                key=layout_key
+            ))
+        self.current_layout = kwargs.get("start_layout", self.layout_keys[0])
+        kwargs.pop("start_layout", None)
         super().__init__(layout=[final_layout], **kwargs)
-        self.current_layout = kwargs.get("start_layout", 0)
-        self.max_layout = len(layouts)
 
-    def change_layout(self, layout_number):
-        if 0 <= layout_number < self.max_layout:
-            if self.current_layout != layout_number:
-                self[self.get_layout_key(self.current_layout)].update(visible=False)
-                self.current_layout = layout_number
-            self[self.get_layout_key(self.current_layout)].update(visible=True)
-            return True
+    def change_layout(self, layout_key):
+        if layout_key in self.layout_keys:
+            if layout_key != self.current_layout:
+                self[self.current_layout].update(visible=False)
+                self[layout_key].update(visible=True)
+                self.current_layout = layout_key
         else:
-            return False
-
-    def next_layout(self):
-        return self.change_layout(self.current_layout + 1)
-
-    def previous_layout(self):
-        return self.change_layout(self.current_layout - 1)
+            raise KeyError("Layout key not found")
 
     def get_layout(self):
         return self.current_layout
-
-    def get_layout_key(self, layout):
-        return "-COL" + "-" + str(layout) + "-"
 
     def __enter__(self):
         return self
@@ -80,24 +75,26 @@ tolerance_measure_layout = [[sg.Push(), sg.Text('Add weight to begin measuring.'
 instruction_layout = [[sg.Push(), sg.Text('Connecting to scale...', key='-INSTRUCTION-1-'), sg.Push()],
                       [sg.Push(), sg.Exit(), sg.Push()]]
 
-window = MultiLayoutWindow([scale_selection_layout, tolerance_input_layout, tolerance_measure_layout, instruction_layout], title='Chemistry Lab')
+window = MultiLayoutWindow(
+    {
+        "scale_selection": scale_selection_layout, 
+        "tolerance_input": tolerance_input_layout, 
+        "tolerance_measure": tolerance_measure_layout, 
+        "instruction": instruction_layout
+    },
+    start_layout="instruction",
+    title='Chemistry Lab'
+)
 
-# tolerance_measure_layout = [[sg.Push(), sg.Text('Please place the item on the scale and press the button below to measure it.'), sg.Push()],
-
-
-# window = sg.Window('Scale Selection', scale_selection_layout)
-
-window.read(timeout=0)
-window.change_layout(3)
 window.read(timeout=0)
 
 scale1 = scale.auto_connect_scale()
 if scale1 is None:
-    window.change_layout(0)
+    window.change_layout("scale_selection")
     window['-SCALE-MODEL-SECTION-'].update(visible=False)
 else:
     scale1.send_receive("D \"Lab\"")
-    window.change_layout(1)
+    window.change_layout("tolerance_input")
 
 prev_target = ""
 
@@ -111,7 +108,7 @@ while True:
             break
 
     # Scale selection events
-    if window.get_layout() == 0:
+    if window.get_layout() == "scale_selection":
         if event == '-SCALE-SELECTION-':
             window['-SCALE-MODEL-'].update(values=scale.manufacturer_scales[values['-SCALE-SELECTION-']])
             window['-SCALE-MODEL-SECTION-'].update(visible=True)
@@ -125,10 +122,10 @@ while True:
             else:
                 scale1 = scale.Scale(values['-PORT-SELECTION-'])
             scale1.send_receive("D \"Lab\"")
-            window.next_layout()
+            window.change_layout("tolerance_input")
 
     # Tolerance input events
-    if window.get_layout() == 1:
+    if window.get_layout() == "tolerance_input":
         if event == '-TARGET-':
             try:
                 target_measure = scale.string_to_measure(values['-TARGET-'])
@@ -143,10 +140,10 @@ while True:
                     tolerance = fn.try_float(values['-TOLERANCE-']) / 100
                 else:
                     tolerance = fn.try_float(values['-TOLERANCE-']) / target_measure.measure
-                window.next_layout()
+                window.change_layout("tolerance_measure")
 
     # Tolerance measure events
-    if window.get_layout() == 2:
+    if window.get_layout() == "tolerance_measure":
         try:
             measurement = scale1.get_weight_data()
 
