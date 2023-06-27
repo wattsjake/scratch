@@ -72,18 +72,23 @@ tolerance_input_layout = [[sg.Push(), sg.Text('Target measurement (include unit)
                           [sg.Push(), sg.Text('Type of tolerance: '), sg.Radio('Percent (%)', "TOLERANCE-TYPE", default=True, key="-TOLERANCE-IS-PERCENT-"),
                              sg.Radio('Amount (Unit)', "TOLERANCE-TYPE", default=False), sg.Push()],
                           [sg.Push(), sg.Text('Please enter the tolerance: '), sg.Input(key='-TOLERANCE-', enable_events=True)],
-                          [sg.Button('Continue', key="-CONTINUE-1-"), sg.Exit()]]
+                          [sg.Push(), sg.Button('Continue', key="-CONTINUE-1-"), sg.Exit(), sg.Push()]]
 
 tolerance_measure_layout = [[sg.Push(), sg.Text('Add weight to begin measuring.', key='-INSTRUCTION-2-'), sg.Push()],
-                            [sg.Push(), sg.Button('Tare', key='-TARE-'), sg.Push()]]
+                            [sg.Push(), sg.Button('Tare', key='-TARE-'), sg.Exit(), sg.Push()]]
 
-window = MultiLayoutWindow([scale_selection_layout, tolerance_input_layout, tolerance_measure_layout], title='Chemistry Lab')
+instruction_layout = [[sg.Push(), sg.Text('Connecting to scale...', key='-INSTRUCTION-1-'), sg.Push()],
+                      [sg.Push(), sg.Exit(), sg.Push()]]
+
+window = MultiLayoutWindow([scale_selection_layout, tolerance_input_layout, tolerance_measure_layout, instruction_layout], title='Chemistry Lab')
 
 # tolerance_measure_layout = [[sg.Push(), sg.Text('Please place the item on the scale and press the button below to measure it.'), sg.Push()],
-                            
+
 
 # window = sg.Window('Scale Selection', scale_selection_layout)
 
+window.read(timeout=0)
+window.change_layout(3)
 window.read(timeout=0)
 
 scale1 = scale.auto_connect_scale()
