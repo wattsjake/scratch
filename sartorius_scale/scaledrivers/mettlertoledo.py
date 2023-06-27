@@ -28,6 +28,11 @@ class MettlerToledo(scale.Scale):
     
     def get_weight_data(self):
         weight_string = self.send_receive(self.PRINT_SCREEN)
+        match weight_string[2]:
+            case '+':
+                raise scale.ScaleMeasurementException("Scale is overloaded")
+            case '-':
+                raise scale.ScaleMeasurementException("Scale is underloaded")
         string_end = len(weight_string) - len(self.COMMAND_END)
         weight_data = scale.string_to_measure(weight_string[4:string_end])
         if(weight_string[2] == 'S'):
