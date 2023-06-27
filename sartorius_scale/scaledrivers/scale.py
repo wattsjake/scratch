@@ -25,7 +25,7 @@ class Scale:
     Stores a collection of methods and attributes that are common to all scales.
     """
 
-    timeout = 0.5
+    timeout = 2
 
     def __init__(self, port: str, **kwargs):
         if not hasattr(self, "DEFAULT_SERIAL"):
@@ -184,3 +184,10 @@ def auto_connect_scale():
 
     return None
                 
+class ScaleException(serial.SerialException):
+    r"""Base class for all scale errors."""
+    pass
+
+class ScaleMeasurementException(ScaleException):
+    r"""Raised when the scale returns an invalid measurement."""
+    pass
