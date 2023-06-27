@@ -99,8 +99,11 @@ prev_target = ""
 while True:
     event, values = window.read(timeout=100)
     # print(event, values)
-    if event in (sg.WIN_CLOSED, 'Exit'):
+    if event == sg.WIN_CLOSED:
         break
+    if isinstance(event, str):
+        if 'Exit' in event:
+            break
 
     # Scale selection events
     if window.get_layout() == 0:
