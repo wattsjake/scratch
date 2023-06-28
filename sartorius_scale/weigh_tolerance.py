@@ -122,7 +122,7 @@ else:
     window.change_layout("student_info")
 
 prev_target = ""    # Stores the previous target measurement input so invalid inputs can be reversed
-hit_target = False  # Stores whether the target measurement has been hit
+hit_measure = None  # Stores the measurement that hit the target measurement if there is one
 
 while True:
     event, values = window.read(timeout=100)
@@ -190,12 +190,12 @@ while True:
             if measurement.stable:
                 if abs(measurement.measure - target_measure.measure) <= tolerance * target_measure.measure:
                     window['-INSTRUCTION-3-'].update("Measurement is within tolerance. Please remove the item from the scale.")
-                    hit_target = True
+                    hit_measure = measurement
                     continue
-                if hit_target and measurement.measure < ((1 - tolerance) * target_measure.measure)/10:
+                if isinstance(hit_measure, data_class.Data) and measurement.measure < ((1 - tolerance) * target_measure.measure)/10:
                     filename = window["-LABS-"].get().lower().replace(" ", "_") + ".csv"
-                    add_student_measure(filename, values['-STUDENT-NAME-'], measurement)
-                    hit_target = False
+                    add_student_measure(filename, values['-STUDENT-NAME-'], hit_measure)
+                    hit_measure = None
                     for field in temp_fields:
                         window[field].update("")
                     window.change_layout("student_info")
@@ -207,6 +207,7 @@ while True:
                 if measurement > target_measure:
                     direction_text = "Remove "
                 window['-INSTRUCTION-3-'].update("Measurement not within tolerance. " + direction_text + amount_text + "more.")
+                hit_measure = None
             else:
                 window['-INSTRUCTION-3-'].update("Measurement in progress. Please wait.")
         except scale.ScaleMeasurementException as e:
