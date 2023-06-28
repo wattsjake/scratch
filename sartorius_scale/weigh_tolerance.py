@@ -2,6 +2,10 @@ from serial.tools.list_ports import comports
 import PySimpleGUI as sg
 from scaledrivers import scale
 import fastnumbers as fn
+import csv
+import data_class
+import datetime
+import pytz
 
 # From PySimpleGUI cookbook
 def collapse(layout, key):
@@ -49,6 +53,15 @@ class MultiLayoutWindow(sg.Window):
 
     def __exit__(self, exc_type, exc_value, traceback):
         super().__exit__(exc_type, exc_value, traceback)
+
+def add_student_measure(filename: str, student_name: str, data: data_class.Data):
+    with open(filename, 'a') as csvfile:
+        writer = csv.DictWriter(csvfile)
+        date_time = datetime.fromtimestamp(data.time, tz=pytz.timezone('US/Mountain'))
+        writer.writerow({'Student Name': student_name, 
+                         'Measurement': data.measure, 
+                         'Unit': data.unit,
+                         'Time': date_time})
 
 
 
@@ -102,6 +115,8 @@ else:
     window.change_layout("student_info")
 
 prev_target = ""
+hit_target = False
+csv_writer = csv.DictWriter()
 
 while True:
     event, values = window.read(timeout=100)
