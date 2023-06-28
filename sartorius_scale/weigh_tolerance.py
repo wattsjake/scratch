@@ -94,6 +94,8 @@ tolerance_measure_layout = [[sg.Push(), sg.Text('Add weight to begin measuring.'
 instruction_layout = [[sg.Push(), sg.Text('Connecting to scale...', key='-INSTRUCTION-4-'), sg.Push()],
                       [sg.Push(), sg.Exit(), sg.Push()]]
 
+temp_fields = ['-STUDENT-NAME-', '-LABS-', '-TARGET-', '-TOLERANCE-']
+
 window = MultiLayoutWindow(
     {
         "scale_selection": scale_selection_layout, 
@@ -116,8 +118,8 @@ else:
     scale1.send_receive("D \"Lab\"")
     window.change_layout("student_info")
 
-prev_target = ""
-hit_target = False
+prev_target = ""    # Stores the previous target measurement input so invalid inputs can be reversed
+hit_target = False  # Stores whether the target measurement has been hit
 
 while True:
     event, values = window.read(timeout=100)
@@ -191,6 +193,9 @@ while True:
                     filename = window["-LABS-"].get().lower().replace(" ", "_") + ".csv"
                     add_student_measure(filename, values['-STUDENT-NAME-'], measurement)
                     hit_target = False
+                    for field in temp_fields:
+                        window[field].update("")
+                    window.change_layout("student_info")
                     continue
                 amount_text = ""
                 if abs(measurement.measure - target_measure.measure) <= tolerance * 1.5 * target_measure.measure:
