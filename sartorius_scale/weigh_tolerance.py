@@ -4,7 +4,7 @@ from scaledrivers import scale
 import fastnumbers as fn
 import csv
 import data_class
-import datetime
+from datetime import datetime
 import pytz
 
 # From PySimpleGUI cookbook
@@ -56,12 +56,14 @@ class MultiLayoutWindow(sg.Window):
 
 def add_student_measure(filename: str, student_name: str, data: data_class.Data):
     with open(filename, 'a') as csvfile:
-        writer = csv.DictWriter(csvfile)
+        writer = csv.DictWriter(csvfile, fieldnames=['Student Name', 'Measurement', 'Unit', 'Time'])
         date_time = datetime.fromtimestamp(data.time, tz=pytz.timezone('US/Mountain'))
         writer.writerow({'Student Name': student_name, 
                          'Measurement': data.measure, 
                          'Unit': data.unit,
                          'Time': date_time})
+
+
 
 
 
@@ -116,7 +118,6 @@ else:
 
 prev_target = ""
 hit_target = False
-csv_writer = csv.DictWriter()
 
 while True:
     event, values = window.read(timeout=100)
@@ -184,14 +185,20 @@ while True:
             if measurement.stable:
                 if abs(measurement.measure - target_measure.measure) <= tolerance * target_measure.measure:
                     window['-INSTRUCTION-3-'].update("Measurement is within tolerance. Please remove the item from the scale.")
-                else:
-                    amount_text = ""
-                    if abs(measurement.measure - target_measure.measure) <= tolerance * 1.5 * target_measure.measure:
-                        amount_text = "a little "
-                    direction_text = "Add "
-                    if measurement > target_measure:
-                        direction_text = "Remove "
-                    window['-INSTRUCTION-3-'].update("Measurement not within tolerance. " + direction_text + amount_text + "more.")
+                    hit_target = True
+                    continue
+                if hit_target and measurement.measure < ((1 - tolerance) * target_measure.measure)/10:
+                    filename = window["-LABS-"].get().lower().replace(" ", "_") + ".csv"
+                    add_student_measure(filename, values['-STUDENT-NAME-'], measurement)
+                    hit_target = False
+                    continue
+                amount_text = ""
+                if abs(measurement.measure - target_measure.measure) <= tolerance * 1.5 * target_measure.measure:
+                    amount_text = "a little "
+                direction_text = "Add "
+                if measurement > target_measure:
+                    direction_text = "Remove "
+                window['-INSTRUCTION-3-'].update("Measurement not within tolerance. " + direction_text + amount_text + "more.")
             else:
                 window['-INSTRUCTION-3-'].update("Measurement in progress. Please wait.")
         except scale.ScaleMeasurementException as e:
