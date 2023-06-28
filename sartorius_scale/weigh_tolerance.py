@@ -55,7 +55,10 @@ class MultiLayoutWindow(sg.Window):
         super().__exit__(exc_type, exc_value, traceback)
 
 def add_student_measure(filename: str, student_name: str, data: data_class.Data):
-    with open(filename, 'a', newline='') as csvfile:
+    with open(filename, 'a+', newline='') as csvfile:
+        if csvfile.tell() == 0:
+            writer = csv.DictWriter(csvfile, fieldnames=['Student Name', 'Measurement', 'Unit', 'Time'])
+            writer.writeheader()
         writer = csv.DictWriter(csvfile, fieldnames=['Student Name', 'Measurement', 'Unit', 'Time'])
         date_time = datetime.fromtimestamp(data.time, tz=pytz.timezone('US/Mountain'))
         writer.writerow({'Student Name': student_name, 
