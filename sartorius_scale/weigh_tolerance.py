@@ -63,21 +63,26 @@ scale_selection_layout = [[sg.Push(), sg.Text('Serial Port:'), sg.Combo(port_lis
                           [sg.Push(), collapse([[sg.Text('Scale Model:'), sg.Combo([], key='-SCALE-MODEL-')]], '-SCALE-MODEL-SECTION-')],
                           [sg.Push(), sg.Button('Continue', key="-CONTINUE-0-"), sg.Exit(), sg.Push()]]
 
+student_info_layout = [[sg.Push(), sg.Text("Student's Name:"), sg.Input(key='-STUDENT-NAME-'), sg.Push()],
+                       [sg.Push(), sg.Text("Lab:"), sg.Combo(['Carbon Dioxide', 'Nitrous Oxide Reaction', 'Quiz #1'], key="-LABS-"), sg.Push()],
+                       [sg.Push(), sg.Button('Continue', key="-CONTINUE-1-"), sg.Exit(), sg.Push()]]
+
 tolerance_input_layout = [[sg.Push(), sg.Text('Target measurement (include unit): '), sg.Input(key='-TARGET-', enable_events=True)],
                           [sg.Push(), sg.Text('Type of tolerance: '), sg.Radio('Percent (%)', "TOLERANCE-TYPE", default=True, key="-TOLERANCE-IS-PERCENT-"),
                              sg.Radio('Amount (Unit)', "TOLERANCE-TYPE", default=False), sg.Push()],
-                          [sg.Push(), sg.Text('Please enter the tolerance: '), sg.Input(key='-TOLERANCE-', enable_events=True)],
-                          [sg.Push(), sg.Button('Continue', key="-CONTINUE-1-"), sg.Exit(), sg.Push()]]
+                          [sg.Push(), sg.Text('Tolerance: '), sg.Input(key='-TOLERANCE-', enable_events=True)],
+                          [sg.Push(), sg.Button('Continue', key="-CONTINUE-2-"), sg.Exit(), sg.Push()]]
 
-tolerance_measure_layout = [[sg.Push(), sg.Text('Add weight to begin measuring.', key='-INSTRUCTION-2-'), sg.Push()],
+tolerance_measure_layout = [[sg.Push(), sg.Text('Add weight to begin measuring.', key='-INSTRUCTION-3-'), sg.Push()],
                             [sg.Push(), sg.Button('Tare', key='-TARE-'), sg.Exit(), sg.Push()]]
 
-instruction_layout = [[sg.Push(), sg.Text('Connecting to scale...', key='-INSTRUCTION-1-'), sg.Push()],
+instruction_layout = [[sg.Push(), sg.Text('Connecting to scale...', key='-INSTRUCTION-4-'), sg.Push()],
                       [sg.Push(), sg.Exit(), sg.Push()]]
 
 window = MultiLayoutWindow(
     {
         "scale_selection": scale_selection_layout, 
+        "student_info": student_info_layout,
         "tolerance_input": tolerance_input_layout, 
         "tolerance_measure": tolerance_measure_layout, 
         "instruction": instruction_layout
@@ -94,13 +99,13 @@ if scale1 is None:
     window['-SCALE-MODEL-SECTION-'].update(visible=False)
 else:
     scale1.send_receive("D \"Lab\"")
-    window.change_layout("tolerance_input")
+    window.change_layout("student_info")
 
 prev_target = ""
 
 while True:
     event, values = window.read(timeout=100)
-    # print(event, values)
+    # print(event, values)  # For debugging
     if event == sg.WIN_CLOSED:
         break
     if isinstance(event, str):
@@ -122,6 +127,20 @@ while True:
             else:
                 scale1 = scale.Scale(values['-PORT-SELECTION-'])
             scale1.send_receive("D \"Lab\"")
+            window.change_layout("student_info")
+
+    # Student info events
+    if window.get_layout() == "student_info":
+        if event == '-CONTINUE-1-':
+            if values['-STUDENT-NAME-'] == "":
+                sg.popup_error("Please enter a student name.")
+                continue
+            if values['-LABS-'] == "":
+                sg.popup_error("Please select a lab.")
+                continue
+            if values['-LABS-'] not in window['-LABS-'].Values:
+                sg.popup_error("Please select a valid lab.")
+                continue
             window.change_layout("tolerance_input")
 
     # Tolerance input events
@@ -132,7 +151,7 @@ while True:
                 prev_target = values['-TARGET-']
             except ValueError:
                 window['-TARGET-'].update(value=prev_target)
-        if event == '-CONTINUE-1-':
+        if event == '-CONTINUE-2-':
             if target_measure.measure == None or target_measure.unit == "":
                 sg.popup_error("Please enter a valid target measurement.")
             else:
@@ -149,7 +168,7 @@ while True:
 
             if measurement.stable:
                 if abs(measurement.measure - target_measure.measure) <= tolerance * target_measure.measure:
-                    window['-INSTRUCTION-2-'].update("Measurement is within tolerance. Please remove the item from the scale.")
+                    window['-INSTRUCTION-3-'].update("Measurement is within tolerance. Please remove the item from the scale.")
                 else:
                     amount_text = ""
                     if abs(measurement.measure - target_measure.measure) <= tolerance * 1.5 * target_measure.measure:
@@ -157,11 +176,11 @@ while True:
                     direction_text = "Add "
                     if measurement > target_measure:
                         direction_text = "Remove "
-                    window['-INSTRUCTION-2-'].update("Measurement not within tolerance. " + direction_text + amount_text + "more.")
+                    window['-INSTRUCTION-3-'].update("Measurement not within tolerance. " + direction_text + amount_text + "more.")
             else:
-                window['-INSTRUCTION-2-'].update("Measurement in progress. Please wait.")
+                window['-INSTRUCTION-3-'].update("Measurement in progress. Please wait.")
         except scale.ScaleMeasurementException as e:
-            window['-INSTRUCTION-2-'].update(e)
+            window['-INSTRUCTION-3-'].update(e)
 
         if event == '-TARE-':
             scale1.tare()
