@@ -5,6 +5,8 @@ import six
 # Superclass for all Sartorius scales
 @six.add_metaclass(scale.custom_class_repr("Sartorius"))
 class Sartorius(scale.Scale):
+    """Superclass for all Sartorius scales
+    """
 
     COMMAND_START = '\x1B'
     COMMAND_END = ''
@@ -27,17 +29,29 @@ class Sartorius(scale.Scale):
         return "Sartorius"
     
     def test_port(self):
+        """Tests a port to see if it is a Sartorius scale
+
+        :return: True if the port is a Sartorius scale, False otherwise
+        :rtype: bool
+        """        
         response = self.send_receive(self.SCALE_INFO)
         return False  # Not yet implemented
 
     def response_complete(self, next_line):
+        """Determines if a response from a Sartorius scale is complete
+
+        :param next_line: Next line of the response
+        :type next_line: str
+        :return: True if the response is complete, False otherwise
+        :rtype: bool
+        """
+
         return True  # Not yet implemented
 
 @six.add_metaclass(scale.custom_class_repr("Entris", Sartorius))
 class Entris(Sartorius):
 
     # All possible settings for options required to initiate connection listed in case a brute force connection is necessary
-    # Default configuration is 19200 baud, 8 data bits, 1 stop bit, odd parity
     BAUDRATES = (600, 1200, 2400, 4800, 9600, 19200)  # Tuple of possible baud-rates
     BYTESIZES = (serial.EIGHTBITS, serial.SEVENBITS)  # Tuple of possible byte sizes
     STOPBITS = (serial.STOPBITS_ONE, serial.STOPBITS_TWO)  # Tuple of possible stop bits
