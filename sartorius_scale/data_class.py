@@ -131,7 +131,7 @@ class DataCollect:
             if self.GetValidLength(column) > 0:
                 self.forced_measures[column] += 1
             
-            self.__add_measure(*args, **kwargs)
+            self._add_measure(*args, **kwargs)
             self.valid_measure[column] = True
             return
 
@@ -141,15 +141,15 @@ class DataCollect:
 
         # If the last measure was valid, add a new one. If not, update the last one
         if (self.valid_measure[column]):
-            self.__add_measure(*args, **kwargs)
+            self._add_measure(*args, **kwargs)
         else:
-            self.__update_measure(*args)
+            self._update_measure(*args)
 
         # If the delay was met, set the last measure to be valid
         self.valid_measure[column] = self.GetTimeIncrement(**kwargs) > self.delay
 
 
-    def __add_measure(self, *args, **kwargs):
+    def _add_measure(self, *args, **kwargs):
         r"""Adds a measure to the current column of the data collector.
 
         Private method to be used within data collection class for measures that must be added.
@@ -169,11 +169,11 @@ class DataCollect:
             return
         
         # If the last measure in the column is not the final measure, update it and say it's the final measure
-        self.__update_measure(*args, **kwargs, row = -1)
+        self._update_measure(*args, **kwargs, row = -1)
         self.valid_measure[column] = True
         
 
-    def __update_measure(self, *args, **kwargs):
+    def _update_measure(self, *args, **kwargs):
         r"""Updates a measure in the current column of the data collector.
 
         Private method to be used within data collection class for measures that must be updated.
@@ -324,7 +324,7 @@ class DataCollect:
         return self.measures[column][0].time
     
 
-    def GetTimeSinceStart(self, column: int = None, row: int = -1) -> float:
+    def GetTimeSinceStart(self, column: int=None, row: int=-1) -> float:
         r"""Gets the time of a data point from the start of the column.
 
         Args:
