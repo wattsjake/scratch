@@ -16,12 +16,20 @@ def collapse(layout, key):
     :return: A pinned column that can be placed directly into your layout
     :rtype: sg.pin
     """
+
     return sg.pin(sg.Column(layout, key=key, pad=(0, 0)))
 
 
 class MultiLayoutWindow(sg.Window):
 
     def __init__(self, layouts, **kwargs):
+        """Constructor for MultiLayoutWindow
+
+        :param layouts: 
+            Layouts that can be switched between in the window
+            Keys are the keys for the layouts, values are the layouts
+        :type layouts: dict
+        """        
 
         final_layout = []
         self.layout_keys = list(layouts.keys())
@@ -37,6 +45,13 @@ class MultiLayoutWindow(sg.Window):
         super().__init__(layout=[final_layout], **kwargs)
 
     def change_layout(self, layout_key):
+        """Changes the layout to the layout specified by layout_key
+
+        :param layout_key: Key of the layout to switch to
+        :type layout_key: str
+        :raises KeyError: If the layout_key is not found in the layouts dictionary
+        """
+
         if layout_key in self.layout_keys:
             if layout_key != self.current_layout:
                 self[self.current_layout].update(visible=False)
@@ -46,6 +61,11 @@ class MultiLayoutWindow(sg.Window):
             raise KeyError("Layout key not found")
 
     def get_layout(self):
+        """Returns the key of the current layout
+
+        :return: Key of the current layout
+        :rtype: str
+        """        
         return self.current_layout
 
     def __enter__(self):
@@ -55,6 +75,16 @@ class MultiLayoutWindow(sg.Window):
         super().__exit__(exc_type, exc_value, traceback)
 
 def add_student_measure(filename: str, student_name: str, data: data_class.Data):
+    """Adds a student's measurement to the respective lab file
+
+    :param filename: Name of the lab file
+    :type filename: str
+    :param student_name: Name of the student
+    :type student_name: str
+    :param data: Data object containing the measurement
+    :type data: data_class.Data
+    """    
+
     with open(filename, 'a+', newline='') as csvfile:
         if csvfile.tell() == 0:
             writer = csv.DictWriter(csvfile, fieldnames=['Student Name', 'Measurement', 'Unit', 'Time'])
