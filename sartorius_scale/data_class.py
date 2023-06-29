@@ -366,7 +366,7 @@ class DataCollect:
 
         Returns:
             float: Measurement of selected datum.
-        """        
+        """
         
         if column == None:
             column = self.column
