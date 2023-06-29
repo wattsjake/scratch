@@ -3,10 +3,17 @@ from serial.tools.list_ports import comports
 import fastnumbers as fn
 
 # Copied over from StackOverflow; author is Jonathan Eunice
-def custom_class_repr(name, *base_classes):
-    r"""Factory that returns custom metaclass with a class ``__repr__`` that
+def custom_class_repr(name: str, *base_classes: type) -> type:
+    """Factory that returns custom metaclass with a class ``__repr__`` that
     returns ``name``.
-    """
+
+    :param name: Name to give class object
+    :type name: str
+    :param \*base_classes: Base classes to use for metaclass
+    :type \*base_classes: str
+    :return: Metaclass with custom ``__repr__`` method
+    :rtype: type
+    """    
 
     if not base_classes:
         bases = (type,)
