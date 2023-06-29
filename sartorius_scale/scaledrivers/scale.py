@@ -9,8 +9,11 @@ def custom_class_repr(name: str, *base_classes: type) -> type:
 
     :param name: Name to give class object
     :type name: str
-    :param \*base_classes: Base classes to use for metaclass
-    :type \*base_classes: str
+    :param \*base_classes: Base classes of the affected class object.
+        The metaclasses of these classes are used to make sure the metaclass
+        returned by this function is compatible with the metaclasses of the
+        base classes.
+    :type \*base_classes: type
     :return: Metaclass with custom ``__repr__`` method
     :rtype: type
     """    
@@ -25,9 +28,8 @@ def custom_class_repr(name: str, *base_classes: type) -> type:
 
     return type('MetaScale', bases, {'__str__': lambda self: name})
 
-# Superclass for all scales
 class Scale:
-    r"""Superclass for all scales.
+    """Superclass for all scales.
 
     Stores a collection of methods and attributes that are common to all scales.
     """
@@ -35,6 +37,12 @@ class Scale:
     timeout = 2
 
     def __init__(self, port: str, **kwargs):
+        """Initializes a Scale object.
+
+        :param port: Name of port to connect to.
+        :type port: str
+        """
+        
         if not hasattr(self, "DEFAULT_SERIAL"):
             self.DEFAULT_SERIAL = {}
         self.set_serial(port, **kwargs, timeout=self.timeout)
