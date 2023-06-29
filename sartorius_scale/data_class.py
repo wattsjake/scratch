@@ -6,7 +6,7 @@ from functools import total_ordering
 
 
 @dataclass
-@total_ordering
+@total_ordering     # Fills in comparison operators that weren't given
 class Data:
     r"""Stores data for a given measurement.
 
