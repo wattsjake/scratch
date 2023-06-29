@@ -42,9 +42,9 @@ class Scale:
         :param port: Name of port to connect to.
         :type port: str
         """
-        
+
         if not hasattr(self, "DEFAULT_SERIAL"):
-            self.DEFAULT_SERIAL = {}
+            self.DEFAULT_SERIAL = {}  # Default settings are empty because serial already has default settings
         self.set_serial(port, **kwargs, timeout=self.timeout)
         self.encoding = kwargs.get('encoding', 'utf-8')  # Encoding for serial communication
 
@@ -100,17 +100,16 @@ class Scale:
     # # # METHODS # # #
 
     def send_receive(self, command: str) -> str:
-        r"""Send a command and receive the scale's response.
+        """Send a command and receive the scale's response.
 
         Commands are automatically encoded and responses are automatically decoded.
         Check the scale's documentation for a list of commands.
 
-        Args:
-            command (str): Command to send to the scale.
-
-        Returns:
-            str: The scale's response to the command.
-        """
+        :param command: Command to send to scale.
+        :type command: str
+        :return: Response from scale.
+        :rtype: str
+        """        
 
         self.ser.reset_output_buffer()
         self.ser.read_all()
@@ -118,6 +117,8 @@ class Scale:
         self.ser.write((self.COMMAND_START + command + self.COMMAND_END).encode(self.encoding))
         next_line = self.ser.readline().decode(self.encoding)
         response = next_line
+
+        # While loop is to keep reading the scale's response if it is more than one line
         while not (self.response_complete(next_line) or next_line == ""):
             next_line = self.ser.readline().decode(self.encoding)
             response += next_line
@@ -159,15 +160,16 @@ manufacturer_scales = {sartorius.Sartorius: sartorius.scales,
                        mettlertoledo.MettlerToledo: mettlertoledo.scales}
 
 def string_to_measure(measure: str) -> data_class.Data:
-    r"""Converts a string to a Data object.
+    """Converts a measurement in string form to a Data object.
 
-    Args:
-        measure (str): Measurement in string form. Must be in the form of a number followed by a unit.
-            All spaces will be removed before parsing.
+    :param measure: 
+        Measurement in string form. Must be in the form of a number followed by a unit.
+        All spaces will be removed before parsing.
+    :type measure: str
+    :return: Data object with the measurement and unit.
+    :rtype: data_class.Data
+    """
 
-    Returns:
-        data_class.Data: Measure with the given value and unit.
-    """    
     measure = measure.replace(" ", "")
 
     data = data_class.Data()
@@ -179,6 +181,11 @@ def string_to_measure(measure: str) -> data_class.Data:
             return data
 
 def auto_connect_scale():
+    """Automatically connects to a scale if one is available.
+
+    :return: _description_
+    :rtype: _type_
+    """    
     for port in comports():
         for manufacturer in manufacturer_scales:
             try:
@@ -200,9 +207,11 @@ def auto_connect_scale():
     return None
                 
 class ScaleException(serial.SerialException):
-    r"""Base class for all scale errors."""
+    """Raised on general scale exception.
+    """    
     pass
 
 class ScaleMeasurementException(ScaleException):
-    r"""Raised when the scale returns an invalid measurement."""
+    """Raised when the scale returns an invalid measurement.
+    """
     pass
